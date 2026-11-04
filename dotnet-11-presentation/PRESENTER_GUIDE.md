@@ -1,57 +1,56 @@
 # Presenter Prep Guide & Architectural Study Sheet
-## What's new in .NET 11: Modern .NET Features for Minimal APIs, Dapper & React
+## What's New in .NET 11: Modern .NET Features for Minimal APIs, Dapper & React
 
-> **Audience:** Junior-to-mid-level software engineers looking for practical modern .NET upgrades.  
+> **Target Audience:** Junior-to-mid-level software engineers looking for high-utility modern .NET upgrades across .NET 8, 9, 10, and 11 (C# 12–15).  
 > **Tech Stack Context:** ASP.NET Core Minimal APIs + **Dapper** calling **SQL / Oracle DB Stored Procedures** + **React (Vite)** frontend.  
-> **Scope:** Down-to-earth developer focus on reducing boilerplate, in-memory data shaping, shared model validation, and contract synchronization with React/Vite.
+> **Presentation Flow:** Show the concept and syntax -> Explain how it works and why it matters -> Run the live demo (`01` through `05` + `MinimalApiDemo`).
 
 ---
 
 ## Table of Contents
-1. [Presentation Strategy & Slide Flow](#1-presentation-strategy--slide-flow)
+1. [Presentation Structure & 5-Module Flow (30 Slides)](#1-presentation-structure--5-module-flow-30-slides)
 2. [Exact CLI Commands & Runbook](#2-exact-cli-commands--runbook)
-3. [Under-the-Hood Architectural Explanations](#3-under-the-hood-architectural-explanations)
-   * [3.1 C# 15 Union Types (Domain States & Result Pattern)](#31-c-15-union-types-domain-states--result-pattern)
-   * [3.2 Semi-Auto Properties & The `field` Keyword](#32-semi-auto-properties--the-field-keyword)
-   * [3.3 Modern LINQ: `CountBy`, `AggregateBy`, and `Index`](#33-modern-linq-countby-aggregateby-and-index)
-   * [3.4 LINQ `LeftJoin`: Single & Multi-Property Joins](#34-linq-leftjoin-single--multi-property-joins)
-   * [3.5 HybridCache: Stampede Protection & Optional Tags](#35-hybridcache-stampede-protection--optional-tags)
-   * [3.6 Automating API Contracts: React/Vite & .NET OpenAPI Generation](#36-automating-api-contracts-reactvite--net-openapi-generation)
-   * [3.7 Shared Model Validation & Async Checks (.NET 11)](#37-shared-model-validation--async-checks-net-11)
-   * [3.8 Runtime Async in .NET 11 CoreCLR](#38-runtime-async-in-net-11-coreclr)
+3. [Under-the-Hood Architectural Deep Dives](#3-under-the-hood-architectural-deep-dives)
+   - [3.1 C# 15 Union Types (Domain State Machines & Explicit Result Pattern)](#31-c-15-union-types-domain-state-machines--explicit-result-pattern)
+   - [3.2 C# 14 `field` Keyword, Collection Expressions & Extension Blocks](#32-c-14-field-keyword-collection-expressions--extension-blocks)
+   - [3.3 Modern LINQ: `CountBy`, `AggregateBy` (`seed: 0m`), and `Index()`](#33-modern-linq-countby-aggregateby-seed-0m-and-index)
+   - [3.4 LINQ `LeftJoin` & `RightJoin`: Single Key vs. Composite Key Joins](#34-linq-leftjoin--rightjoin-single-key-vs-composite-key-joins)
+   - [3.5 `HybridCache`: Stampede Protection & Optional Tag Invalidation](#35-hybridcache-stampede-protection--optional-tag-invalidation)
+   - [3.6 Shared Model Validation (`POST` & `PUT`) & `.NET 11` `IAsyncValidatableObject`](#36-shared-model-validation-post--put--net-11-iasyncvalidatableobject)
+   - [3.7 Bonus: OpenAPI 3.2 Contract Generation for React/Vite & .NET Clients](#37-bonus-openapi-32-contract-generation-for-reactvite--net-clients)
+   - [3.8 Native Runtime Async in .NET 11 CoreCLR](#38-native-runtime-async-in-net-11-coreclr)
 4. [Anticipated Audience Q&A (With Crisp Answers)](#4-anticipated-audience-qa-with-crisp-answers)
-5. [Slide-by-Slide Cheat Sheet & Demo Guide](#5-slide-by-slide-cheat-sheet--demo-guide)
+5. [Slide-by-Slide Cheat Sheet & Demo Callouts (Slides 1–30)](#5-slide-by-slide-cheat-sheet--demo-callouts-slides-130)
 
 ---
 
-## 1. Presentation Strategy & Slide Flow
+## 1. Presentation Structure & 5-Module Flow (30 Slides)
 
-The slide deck (`slides/deck.md`) is designed in **Marp format** in clean, high-contrast **light mode** (optimal for big conference screens and projectors). All bullet points appear immediately upon opening each slide (no distracting click-to-reveal animations).
+The slide deck ([deck.md](file:///C:/dev/antigravity/whatsnewdotnet11/dotnet-11-presentation/slides/deck.md) / [index.html](file:///C:/dev/antigravity/whatsnewdotnet11/dotnet-11-presentation/slides/index.html)) uses Marp in high-contrast **light mode**. Every slide renders all content immediately with zero click-to-reveal fragment animations.
 
-### Presentation Structure (20 Slides):
-* **Slides 1–5: Tooling & Setup**
-  * Practical title and stack alignment.
-  * Microsoft's 2-year STS policy (showing why .NET 11 has the same Nov 2028 end-of-support as .NET 10 LTS).
-  * Single-file C# apps (`dotnet run script.cs`) and `.slnx` XML solution files.
-* **Slides 6–10: C# Language Features**
-  * C# 15 Union types for domain state machines.
-  * C# 15 Union types for explicit result returns (avoiding exceptions).
-  * The `field` keyword for semi-auto properties.
-  * Collection expressions `[.. list]` and `params ReadOnlySpan<T>`.
-  * Architecture guideline: Why we avoid primary constructors in DI classes.
-* **Slides 11–15: Data Shaping & Libraries**
-  * LINQ `CountBy`, `AggregateBy` (explaining `seed: 0m`), and `Index()`.
-  * LINQ `LeftJoin` (single key and composite keys).
-  * `HybridCache` with database backend (SQL / Oracle DB) and optional tags.
-  * System.Text.Json source generation.
-  * **Bonus:** OpenAPI client & model generation in React/Vite and .NET.
-* **Slides 16–18: APIs & Runtime**
-  * Shared model-level validation (reusing rules across `POST` and `PUT`).
-  * Minimal APIs: `TypedResults` and built-in OpenAPI 3.2.
-  * Native Runtime Async in .NET 11 CoreCLR.
-* **Slides 19–20: Takeaways & Discussion**
-  * Practical summary of what to adopt immediately.
-  * Open discussion and demo commands.
+- **Module 1: Tooling & Developer Experience (Slides 1–6)**
+  - Title & Agenda across 5 modules.
+  - Release Cadence & Support Policy: Microsoft extended STS from 18 months to **24 months** starting with .NET 11, meaning both .NET 10 (LTS) and .NET 11 (STS) reach End of Support on **November 14, 2028**.
+  - File-based C# execution (`dotnet run script.cs` with `#:property` / `#:package`).
+  - `.slnx` XML solution format and Visual Studio / SDK workflow updates.
+- **Module 2: C# Language Evolution — C# 12 to C# 15 (Slides 7–13)**
+  - C# 15 `union` types for closed domain state machines (**Demo 01**).
+  - C# 15 `union` types for explicit service result contracts without exception overhead (**Demo 02**).
+  - C# 14 `field` keyword for semi-auto properties.
+  - Collection expressions (`[.. items]`), `params ReadOnlySpan<T>`, and C# 14 `extension` blocks (**Demo 03**).
+  - Architecture Note: Why Primary Constructors are an anti-pattern on DI service classes (captured parameters are mutable and lack `readonly` guarantees).
+- **Module 3: Core Libraries, LINQ & Data Shaping (Slides 14–19)**
+  - LINQ `CountBy`, `AggregateBy` (explaining `seed: 0m`), and `Index()` (**Demo 04**).
+  - LINQ `LeftJoin` and `RightJoin` across single keys and multi-property composite keys (**Demo 05**).
+  - `HybridCache` (L1 RAM + L2 SQL/Oracle DB, stampede coalescing, optional tags) and `System.Text.Json` source generation.
+- **Module 4: Minimal APIs, Validation & Contract Generation (Slides 20–26)**
+  - Fail-fast configuration startup validation (`ValidateDataAnnotations().ValidateOnStart()`).
+  - Shared model validation across `POST` and `PUT` plus `.NET 11` `IAsyncValidatableObject`.
+  - Strongly-typed `TypedResults`, built-in OpenAPI 3.2 (`/openapi/v1.json`), and Scalar UI (**Live Demo: MinimalApiDemo**).
+  - **Bonus (2 Slides):** Automating TypeScript models in React/Vite (`openapi-typescript` + `openapi-fetch`) and typed C# clients (`Kiota` / `NSwag`).
+- **Module 5: Runtime Engine & Upgrade Summary (Slides 27–30)**
+  - .NET 11 CoreCLR Runtime Async (native async suspension, clean stack traces, reduced allocations) and JIT/GC improvements.
+  - High-ROI adoption checklist and full demo command reference.
 
 ---
 
@@ -63,190 +62,180 @@ The slide deck (`slides/deck.md`) is designed in **Marp format** in clean, high-
 Start-Process dotnet-11-presentation/slides/index.html
 
 # Option 2: Run live Marp preview on the markdown file:
-npx @marp-team/marp-cli dotnet-11-presentation/slides/deck.md --preview
+npx @marp-team/marp-cli --no-stdin dotnet-11-presentation/slides/deck.md --preview
 
-# Option 3: Run Marp server mode on the directory:
+# Option 3: Run Marp server mode on the slides directory:
 npx @marp-team/marp-cli -s dotnet-11-presentation/slides --preview
 ```
 
-### Running the C# Demo Scripts
-All demo scripts are self-contained and run on .NET 11:
+### Running the Ordered C# Demo Scripts (`01` to `05`)
+Each script includes `#:property LangVersion=preview` at line 1 and runs directly with `dotnet run`:
 ```powershell
-# Demo 01: C# 15 Unions - Domain State Machine
-dotnet run dotnet-11-presentation/demos/csharp-scripts/01_Unions_Basics.cs -p:LangVersion=preview
+# Demo 01: C# 15 Unions - Domain State Machine & Exhaustive Pattern Matching
+dotnet run dotnet-11-presentation/demos/csharp-scripts/01_Unions_DomainState.cs
 
-# Demo 02: C# 15 Unions - Result Pattern Without Exceptions
-dotnet run dotnet-11-presentation/demos/csharp-scripts/02_Unions_Results.cs -p:LangVersion=preview
+# Demo 02: C# 15 Unions - Explicit Result Pattern Without Throwing Exceptions
+dotnet run dotnet-11-presentation/demos/csharp-scripts/02_Unions_Results.cs
 
-# Demo 03: Semi-Auto Properties with `field` (C# 14)
-dotnet run dotnet-11-presentation/demos/csharp-scripts/03_Field_Keyword.cs -p:LangVersion=preview
+# Demo 03: C# 14 `field` Keyword, Collection Expressions, params ReadOnlySpan<T>, Extension Blocks
+dotnet run dotnet-11-presentation/demos/csharp-scripts/03_LanguageFeatures.cs
 
-# Demo 04: Collection Expressions & params ReadOnlySpan<T>
-dotnet run dotnet-11-presentation/demos/csharp-scripts/04_Collection_Expressions.cs -p:LangVersion=preview
+# Demo 04: Modern LINQ Aggregations (CountBy, AggregateBy with seed: 0m, Index)
+dotnet run dotnet-11-presentation/demos/csharp-scripts/04_Linq_Aggregations.cs
 
-# Demo 05: Modern LINQ Aggregations (CountBy, AggregateBy, Index)
-dotnet run dotnet-11-presentation/demos/csharp-scripts/05_Linq_Aggregations.cs -p:LangVersion=preview
-
-# Demo 06: Modern LINQ LeftJoin (Single & Composite Keys)
-dotnet run dotnet-11-presentation/demos/csharp-scripts/06_Linq_LeftJoin.cs -p:LangVersion=preview
+# Demo 05: Modern LINQ Joins (LeftJoin & RightJoin on Single and Composite Keys)
+dotnet run dotnet-11-presentation/demos/csharp-scripts/05_Linq_Joins.cs
 ```
 
 ### Running the Minimal API Project
 ```powershell
 dotnet run --project dotnet-11-presentation/demos/MinimalApiDemo/MinimalApiDemo.csproj --urls http://localhost:5248
 ```
-* **Interactive Scalar Docs:** Open `http://localhost:5248/scalar/v1` in your browser.
-* **Raw OpenAPI 3.2 JSON:** Open `http://localhost:5248/openapi/v1.json`.
-* **Testing Endpoints:** Execute requests in `dotnet-11-presentation/demos/MinimalApiDemo/requests.http`.
+- **Interactive Scalar API UI:** Open `http://localhost:5248/scalar/v1` in your browser.
+- **Raw OpenAPI 3.2 JSON:** Open `http://localhost:5248/openapi/v1.json`.
+- **Testing Endpoints (`POST`, `PUT`, Validation, HybridCache):** Open and run [requests.http](file:///C:/dev/antigravity/whatsnewdotnet11/dotnet-11-presentation/demos/MinimalApiDemo/requests.http).
 
 ---
 
-## 3. Under-the-Hood Architectural Explanations
+## 3. Under-the-Hood Architectural Deep Dives
 
-### 3.1 C# 15 Union Types (Domain States & Result Pattern)
-* **What is a union?** A `union` represents a closed set of permitted types. Unlike traditional object inheritance where any class in any assembly can derive from a base class, a union declaration strictly bounds the possible types.
-* **Use Cases Beyond Results:**
-  1. **Domain State Machines:** E.g., `OrderState(Pending, Shipped, Delivered, Cancelled)`.
-  2. **Event Types:** In event-driven or messaging workflows, representing specific message payloads.
-  3. **Operation Results:** `OrderResult(Success, NotFound, ValidationError)` without throwing exceptions.
-* **Compiler Exhaustiveness:** In a `switch` expression, the C# compiler verifies that every case is handled. If a developer adds a new state tomorrow, unhandled switches fail to compile, preventing runtime bugs.
-
----
-
-### 3.2 Semi-Auto Properties & The `field` Keyword
-* **The Problem:** In C# 1 through 13, if you wanted to sanitize, trim, or validate a property, you had to declare a manual backing field:
-  ```csharp
-  private string _sku = string.Empty;
-  public string Sku { get => _sku; set => _sku = value.Trim(); }
-  ```
-* **C# 14 Solution:** The contextual keyword `field` gives you direct access to the compiler-synthesized backing store inside the accessor body:
-  ```csharp
-  public string Sku { get => field; set => field = value.Trim(); } = string.Empty;
-  ```
+### 3.1 C# 15 Union Types (Domain State Machines & Explicit Result Pattern)
+- **What is a `union`?** A `union` declares a closed, compiler-enforced set of case types. Unlike class inheritance (where any class can subclass a base type unless you use `abstract` + private constructors), a union restricts the permitted cases to the exact list in the declaration.
+- **Two Core Use Cases:**
+  1. **Domain State Modeling (`01_Unions_DomainState.cs`):** Modeling states with distinct payloads—e.g., `PaymentState(Pending, Authorized, Captured, Declined, Refunded)`—where `Authorized` carries an `AuthCode` and `Declined` carries a `Reason` without nullable properties that only apply to one state.
+  2. **Explicit Service Results (`02_Unions_Results.cs`):** Returning `OrderLookupResult(Found, NotFound, ValidationFailed)` from Dapper repository/service methods instead of throwing custom exceptions for expected business outcomes.
+- **Compiler Exhaustiveness:** In a `switch` expression over a union, the compiler verifies that every union case is handled. If someone adds a new case to the union later, every unhandled `switch` produces a compiler warning/error (`CS8509`) before the code ever runs.
 
 ---
 
-### 3.3 Modern LINQ: `CountBy`, `AggregateBy`, and `Index`
-* **`CountBy` (.NET 9):** Counts occurrences of keys directly in a single pass without allocating `IGrouping<TKey, TElement>` buckets.
-* **`AggregateBy` (.NET 9):**
-  * Performs running accumulation per key.
-  * **What is `seed: 0m`?** `seed` is the initial starting value of the accumulator for each key before processing items. `0m` is simply the C# literal for `decimal` zero (used for financial calculations to prevent floating point inaccuracies).
-* **`Index()` (.NET 9):**
-  * When you need the zero-based index of an item alongside the item itself, `Index()` yields `(int Index, TSource Item)`.
-  * Eliminates the need to maintain a separate `int i = 0; i++` counter outside of `foreach` loops.
+### 3.2 C# 14 `field` Keyword, Collection Expressions & Extension Blocks
+- **The `field` Keyword:** Previously, adding a `.Trim()`, clamping check, or null guard to one property required declaring a manual `private T _backingField;` and writing out both `get` and `set`. With C# 14, `field` accesses the compiler-generated backing field directly inside the `set`/`init`/`get` accessor while keeping the backing field scoped strictly to that property.
+- **Collection Expressions (`[.. list]`):** Unifies array, `List<T>`, and `Span<T>` initialization and allows flattening multiple Dapper query lists (`[.. urgentOrders, .. standardOrders]`) in one pre-sized allocation.
+- **`params ReadOnlySpan<T>`:** When a method takes `params T[]`, every call allocates a heap array. Changing the signature to `params ReadOnlySpan<T>` lets the compiler stack-allocate the arguments (`stackalloc`), resulting in zero heap allocations at the call site.
+- **Extension Blocks (`extension(TargetType)`):** Groups traditional extension methods, **extension properties** (`order.IsHighValue`), and **static extension members** (`OrderRow.Empty`) in one cohesive block.
 
 ---
 
-### 3.4 LINQ `LeftJoin`: Single & Multi-Property Joins
-* **How `LeftJoin` Works (.NET 10):**
-  Includes all items from the left (outer) sequence. If no matching item exists in the right (inner) sequence, the right element evaluates to `null` (or `default(T)`).
-* **Can it join on multiple properties?** **YES!**
-  Just like standard LINQ `Join`, you match on an anonymous type or tuple:
-  ```csharp
-  var result = orders.LeftJoin(
-      catalog,
-      order => new { order.TenantId, order.Sku },
-      prod  => new { prod.TenantId, prod.Sku },
-      (order, prod) => new { order.OrderId, Title = prod?.Title ?? "Uncataloged" }
-  );
-  ```
-* **What can it NOT do?**
-  LINQ joins are **equi-joins** (matching on equality of keys). They cannot perform arbitrary non-equality joins (like SQL `ON a.Date BETWEEN b.Start AND b.End`). For non-equality conditions, perform the join in the SQL stored procedure or use `.Where()` in memory.
+### 3.3 Modern LINQ: `CountBy`, `AggregateBy` (`seed: 0m`), and `Index()`
+- **`CountBy` (.NET 9):** Counts occurrences per key in a single pass without allocating intermediate `IGrouping<TKey, TElement>` buckets like `GroupBy(...).Select(...)` does.
+- **`AggregateBy` (.NET 9) & `seed: 0m`:**
+  - `AggregateBy` maintains a running accumulator per key in a single pass.
+  - **What is `seed: 0m`?** `seed` is the starting value of the accumulator for each new key before folding items into it (equivalent to `decimal sum = 0m;` before a loop). The `m` suffix denotes a C# `decimal` literal (`0.00m`), used for financial/currency values to avoid binary floating-point rounding errors.
+  - You can also pass a `seedSelector` function (e.g., `key => new RegionSummary(0, 0m)`) when accumulating into a multi-field struct or record.
+- **`Index()` (.NET 9):** Yields `(int Index, T Item)` tuples directly in a `foreach` loop, eliminating manual `int i = 0; ... i++` loop counters.
 
 ---
 
-### 3.5 HybridCache: Stampede Protection & Optional Tags
-* **The Problem (Cache Stampede):** When a hot cache key expires in an ordinary `IMemoryCache`, 50 simultaneous web requests will all query the underlying SQL or Oracle DB at the same millisecond.
-* **How `HybridCache` Solves It:**
-  1. Combines local fast RAM (L1) with an external store (L2, such as SQL, Oracle DB, or distributed cache).
-  2. Implements **request coalescing / atomic locking**: only one request executes the factory database query; other concurrent callers wait and share the resulting data.
-* **Tags are Optional:** Tagging (`tags: [$"customer-{id}"]`) is completely optional. You only provide tags if you plan to invalidate groups of related keys at once via `RemoveByTagAsync`.
+### 3.4 LINQ `LeftJoin` & `RightJoin`: Single Key vs. Composite Key Joins
+- **Why In-Memory Joins Matter with Dapper:** Stored procedures often return multiple normalized result sets (e.g., `QueryMultipleAsync` returning Orders in result set 1 and Customers/Warehouses in result set 2). Previously, left-joining them in C# required `GroupJoin` + `SelectMany` + `DefaultIfEmpty()`.
+- **Single-Key `LeftJoin` (.NET 10):** Preserves every outer (left) element and passes `null` (or `default`) for the inner (right) element when no match exists.
+- **Multi-Property (Composite Key) `LeftJoin`:**
+  - `LeftJoin` and `RightJoin` support joining on multiple properties by returning an anonymous type or value tuple in both key selectors:
+    ```csharp
+    orders.LeftJoin(
+        warehouses,
+        o => new { o.TenantId, o.RegionCode },
+        w => new { w.TenantId, w.RegionCode },
+        (o, w) => ...
+    )
+    ```
+  - Anonymous types and value tuples implement structural `Equals` and `GetHashCode` across all fields.
+- **Limitation:** LINQ joins are hash-based **equi-joins** (equality comparisons only). Non-equality range joins (`a.CreatedAt BETWEEN b.Start AND b.End`) must still be done in SQL or via `.Where()`.
 
 ---
 
-### 3.6 Automating API Contracts: React/Vite & .NET OpenAPI Generation
-* **The Problem:** Backend developers write C# DTOs, and frontend React developers manually recreate TypeScript interfaces. When a property name or type changes, bugs slip through until runtime.
-* **The Modern Workflow:**
-  1. ASP.NET Core natively produces the OpenAPI 3.2 document at `/openapi/v1.json`.
-  2. In React/Vite: Run `openapi-typescript` to automatically generate TypeScript definitions:
-     ```bash
-     npx openapi-typescript http://localhost:5248/openapi/v1.json -o src/api/schema.d.ts
-     ```
-  3. React fetch clients use these types. If backend changes `CustomerId` to `ClientId`, TypeScript fails during frontend build!
-  4. In .NET: Tools like Microsoft Kiota or NSwag generate typed client classes for external service consumers.
+### 3.5 `HybridCache`: Stampede Protection & Optional Tag Invalidation
+- **The Cache Stampede Problem:** When a hot cache entry expires in `IMemoryCache` or `IDistributedCache`, 50 concurrent API requests see the cache miss simultaneously and fire 50 identical stored procedure calls against SQL Server or Oracle DB.
+- **How `HybridCache` Works:**
+  1. Provides a unified API over L1 (`IMemoryCache` in-process RAM) and optional L2 (`IDistributedCache` backed by SQL Server, Oracle DB, Redis, or Postgres).
+  2. **Request Coalescing (Stampede Protection):** For concurrent callers requesting the same missing key, `HybridCache` executes the factory callback **once** and shares the resulting task across all waiting callers.
+- **Are Tags Required?** **No.** Tags (`tags: ["orders"]`) are completely optional. Only pass tags if you need bulk invalidation later via `RemoveByTagAsync("orders")`.
 
 ---
 
-### 3.7 Shared Model Validation & Async Checks (.NET 11)
-* **Why Put Validation on the Model?**
-  * Placing validation rules (`[Required]`, `[Range]`, `IAsyncValidatableObject`) on the request model means the exact same rules validate both `POST` (create), `PUT` (update), and programmatic assignments.
-  * Eliminates duplicate validation code across endpoints.
-* **.NET 11 `IAsyncValidatableObject`:**
-  * Allows performing asynchronous checks (such as verifying that a customer exists in the database) without blocking thread-pool threads with `.Result` or `.Wait()`.
+### 3.6 Shared Model Validation (`POST` & `PUT`) & `.NET 11` `IAsyncValidatableObject`
+- **Why Validate on the Shared Request Model?**
+  - Defining DataAnnotations (`[Required]`, `[Range]`, `[RegularExpression]`) and `IValidatableObject` / `IAsyncValidatableObject` on a shared `OrderUpsertModel` means the exact same validation pipeline runs automatically for both `POST /api/orders` (create) and `PUT /api/orders/{id}` (update).
+  - Eliminates duplicated `if (req.Quantity <= 0)` checks scattered across endpoints.
+- **`.NET 11` `IAsyncValidatableObject`:**
+  - Classic `IValidatableObject.Validate(...)` is synchronous, tempting developers to call `.Result` or `.GetAwaiter().GetResult()` when checking database state.
+  - `.NET 11` adds `IAsyncValidatableObject.ValidateAsync(ValidationContext, CancellationToken)`, registered via `builder.Services.AddValidation()`, so async database or repository checks run natively before the endpoint handler executes.
 
 ---
 
-### 3.8 Runtime Async in .NET 11 CoreCLR
-* **The Architecture Change:**
-  * For over a decade, `async`/`await` in C# was lowered by the Roslyn compiler into a bulky state-machine struct/class implementing `IAsyncStateMachine`.
-  * In .NET 11, the CoreCLR runtime engine itself natively manages async frame suspension and resumption.
-* **Everyday Benefits:**
-  * **Clean stack traces:** Exception traces point directly to your actual code lines instead of cryptic `<GetOrderAsync>d__1.MoveNext()`.
-  * **Lower allocation overhead:** Reduces GC allocation pressure on every `await connection.QueryAsync()` call.
+### 3.7 Bonus: OpenAPI 3.2 Contract Generation for React/Vite & .NET Clients
+- **Eliminating Manual DTO Drift:** When Minimal APIs use `TypedResults<Ok<OrderDto>, NotFound, ValidationProblem>`, ASP.NET Core emits exact request/response schemas and status codes in `/openapi/v1.json`.
+- **React / Vite Workflow:**
+  - `npx openapi-typescript http://localhost:5248/openapi/v1.json -o src/api/schema.d.ts` generates zero-runtime-overhead TypeScript interfaces.
+  - Paired with `openapi-fetch`, renaming a property on a C# DTO immediately causes `npm run build` (`tsc`) to fail on the frontend.
+- **.NET Service-to-Service Workflow:**
+  - `dotnet tool run kiota generate -l CSharp ...` or `nswag openapi2csclient` generates strongly-typed C# HTTP clients from the same `/openapi/v1.json` spec.
+
+---
+
+### 3.8 Native Runtime Async in .NET 11 CoreCLR
+- **Compiler Async (C# 5–14) vs. Runtime Async (.NET 11):**
+  - Historically, the Roslyn compiler rewrote every `async` method into a complex state-machine struct (`IAsyncStateMachine.MoveNext()`), which allocated state boxes on heap suspension and polluted exception stack traces with `<MethodName>d__5.MoveNext()`.
+  - In .NET 11, CoreCLR understands async methods natively at the runtime/JIT level, managing continuations directly without compiler-emitted state-machine wrappers.
+- **Practical Impact for Dapper + Minimal APIs:** Cleaner stack traces in production logs and lower memory allocation overhead across `await connection.QueryAsync(...)` chains.
 
 ---
 
 ## 4. Anticipated Audience Q&A (With Crisp Answers)
 
-### Q1: "Can we join on multiple columns using LINQ `LeftJoin`?"
+### Q1: "Should we target .NET 10 (LTS) or .NET 11 (STS) since .NET 11 is an odd-numbered release?"
 > **Answer:**  
-> "Yes, absolutely. You use anonymous types or tuples for the key selectors on both sides, for example: `order => new { order.TenantId, order.Sku }` and `prod => new { prod.TenantId, prod.Sku }`. C# anonymous types implement value equality, so LINQ matches them across all properties."
+> "Microsoft updated the STS support lifecycle from 18 months to **24 months** starting with .NET 11. Because .NET 10 LTS is supported for 3 years (until November 14, 2028) and .NET 11 STS is supported for 2 years from November 2026 (also until **November 14, 2028**), both releases have the exact same end-of-support date. Adopting .NET 11 gives us C# 15 Unions, `IAsyncValidatableObject`, and Runtime Async with no support-window penalty."
+
+### Q2: "Can we join on multiple columns using LINQ `LeftJoin`?"
+> **Answer:**  
+> "Yes. You pass an anonymous type or value tuple in both key selectors—for example `o => new { o.TenantId, o.RegionCode }` and `w => new { w.TenantId, w.RegionCode }`. C# anonymous types and tuples implement structural equality and hash codes across all properties. The only restriction is that LINQ joins are equi-joins (equality matches), not range joins."
+
+### Q3: "What does `seed: 0m` mean in `AggregateBy`?"
+> **Answer:**  
+> "`seed` is the initial value of the accumulator created the first time a key is encountered—just like writing `decimal total = 0m;` before a `foreach` loop. The `m` suffix is C#'s literal for `decimal`, which we use for currency calculations to avoid floating-point precision issues."
+
+### Q4: "Do we need Redis or tags to use `HybridCache`?"
+> **Answer:**  
+> "Neither is required. Out of the box, `HybridCache` gives you in-memory L1 caching plus automatic stampede protection (request coalescing) so 50 concurrent cache misses only trigger 1 SQL/Oracle query. If you want an L2 cache, you can back `IDistributedCache` with SQL Server or Oracle DB. And tags are completely optional—only pass them if you need group invalidation via `RemoveByTagAsync`."
+
+### Q5: "Why do we discourage Primary Constructors on DI Service classes?"
+> **Answer:**  
+> "On `record` DTOs and union case types, primary constructors are great because record properties are `init`-only by default. On regular `class` services, however, primary constructor parameters are captured as ordinary **mutable** private fields—you cannot mark them `readonly`, and any method in the class can accidentally reassign `_db = null!`. For DI services, explicit `private readonly` fields remain safer."
 
 ---
 
-### Q2: "What is the `seed: 0m` in `AggregateBy`?"
-> **Answer:**  
-> "`seed` is just the starting accumulator value for each key before adding items, exactly like initializing `decimal total = 0m;` before a loop. The `m` suffix specifies a C# `decimal` literal, which is standard for currency calculations to prevent floating point rounding errors."
+## 5. Slide-by-Slide Cheat Sheet & Demo Callouts (Slides 1–30)
 
----
-
-### Q3: "Why use C# 15 Unions instead of throwing exceptions for missing records?"
-> **Answer:**  
-> "Throwing an exception for an expected business outcome like 'Order not found' forces the CLR to capture an OS stack trace, which is ~100x slower than returning a value. Furthermore, exceptions hide return branches from the method signature. Unions make all expected outcomes explicit in the method signature, and the compiler guarantees that callers handle every case."
-
----
-
-### Q4: "Do we have to use tags with `HybridCache`?"
-> **Answer:**  
-> "No, tags are completely optional. If you just call `GetOrCreateAsync(key, factory)`, you get full cache stampede protection and two-tier caching. Tags are only needed if you want the ability to invalidate a group of related cache keys in a single call (e.g. `RemoveByTagAsync('customer-101')`)."
-
----
-
-### Q5: "How does OpenAPI client generation help our React/Vite frontend?"
-> **Answer:**  
-> "Currently, frontend developers manually create TypeScript interfaces that mirror our C# DTOs. When a backend property is renamed, the mismatch isn't discovered until runtime. By using `openapi-typescript` in Vite, TypeScript models are generated directly from `/openapi/v1.json`. If backend models change, the React build fails immediately, catching breaking changes before deployment."
-
----
-
-## 5. Slide-by-Slide Cheat Sheet & Demo Guide
-
-| Slide # | Title / Topic | Presenter Cue / Talking Point | Embedded Demo Callout |
+| Slide | Module | Title | Key Talking Point / Live Demo Action |
 |:---:|:---|:---|:---|
-| **1–2** | Title & Roadmap | Down to earth: reducing boilerplate and simplifying code. | N/A |
-| **3** | Lifecycle & Support | STS is now 2 years: .NET 11 has the same Nov 2028 EOL as .NET 10 LTS. | N/A |
-| **4** | Single-File C# Apps | `dotnet run script.cs` — great for quick utilities and test harnesses. | N/A |
-| **5** | `.slnx` & Visual Studio | Clean XML solution format; solves merge conflicts. VS Hot Reload. | N/A |
-| **6** | C# 15 Unions: Overview | Closed set of types; domain state machines; exhaustive `switch`. | N/A |
-| **7** | C# 15 Unions: Results | Explicit results without throwing exceptions. | **Run `01_Unions_Basics.cs` & `02_Unions_Results.cs`** |
-| **8** | The `field` Keyword | Semi-auto properties: sanitize and validate without backing fields. | **Run `03_Field_Keyword.cs`** |
-| **9** | Collection Expressions | `[.. list]` spread syntax; `params ReadOnlySpan<T>`. | **Run `04_Collection_Expressions.cs`** |
-| **10** | Primary Constructor Note| Anti-pattern in DI services (parameters remain mutable). | N/A |
-| **11** | LINQ Aggregations | `CountBy`, `AggregateBy` (seed = 0m), and `Index()`. | **Run `05_Linq_Aggregations.cs`** |
-| **12** | LINQ `LeftJoin` | Single key and composite key (`new { ... }`) joins in memory. | **Run `06_Linq_LeftJoin.cs`** |
-| **13** | `HybridCache` | Solves cache stampedes with DB store; tags are optional. | N/A |
-| **14** | System.Text.Json | JSON Source Generation: compile-time verification & faster startup. | N/A |
-| **15** | OpenAPI Automation | Generating TypeScript types for React/Vite from `/openapi/v1.json`. | N/A |
-| **16** | Shared Model Validation | Model validation works for both POST (insert) and PUT (update). | N/A |
-| **17** | TypedResults & OpenAPI | Strongly-typed status responses; Scalar UI docs. | **Run `MinimalApiDemo` + `requests.http`** |
-| **18** | Runtime Async | Native CoreCLR async: clean stack traces, lower allocations. | N/A |
-| **19–20**| Takeaways & Q&A | Practical summary of what to use today. Open discussion. | N/A |
+| **1** | Intro | Title Slide | Set the technical scope: .NET 8 -> 11 & C# 12 -> 15 for Minimal APIs, Dapper, and React/Vite. |
+| **2** | Intro | Agenda & Architectural Scope | Walk through the 5 modules and explain the "Example -> Explanation -> Live Demo" cadence. |
+| **3** | Mod 1 | Module 1 Divider | Tooling & Developer Experience (.NET 10 & 11 SDK). |
+| **4** | Mod 1 | Lifecycle & Support Policy | Point out the identical **Nov 14, 2028** EOL date for both .NET 10 LTS (36 mo) and .NET 11 STS (24 mo). |
+| **5** | Mod 1 | File-Based C# Programs | Show `dotnet run script.cs` with `#:property` and `#:package`—no `.csproj` ceremony needed. |
+| **6** | Mod 1 | `.slnx` & SDK Enhancements | Show how `.slnx` replaces GUID-heavy `.sln` files with 5 lines of clean XML. |
+| **7** | Mod 2 | Module 2 Divider | C# Language Evolution (C# 12 -> C# 15). |
+| **8** | Mod 2 | C# 15 Unions: Domain States | Show `union PaymentState` and compiler-enforced exhaustiveness (`CS8509`). **Run Demo `01_Unions_DomainState.cs`**. |
+| **9** | Mod 2 | C# 15 Unions: Explicit Results | Contrast union returns with throwing exceptions (~100x faster, explicit signature). **Run Demo `02_Unions_Results.cs`**. |
+| **10** | Mod 2 | C# 14 `field` Keyword | Show inline trimming/clamping inside `set`/`init` without declaring `private T _backingField`. |
+| **11** | Mod 2 | Collection Expressions & Span | Show `[.. urgent, .. standard]` spread syntax and zero-allocation `params ReadOnlySpan<T>`. |
+| **12** | Mod 2 | C# 14 Extension Blocks | Show `extension(OrderRow)` grouping instance extension properties and static extensions. **Run Demo `03_LanguageFeatures.cs`**. |
+| **13** | Mod 2 | Primary Constructors Guidance | Explain why primary constructors are great for records/DTOs but an anti-pattern for DI services (lack of `readonly`). |
+| **14** | Mod 3 | Module 3 Divider | Core Libraries, LINQ & Data Shaping. |
+| **15** | Mod 3 | LINQ `CountBy` & `AggregateBy` | Explain single-pass aggregation and why `seed: 0m` initializes each key's `decimal` accumulator. |
+| **16** | Mod 3 | LINQ Multi-Field & `Index()` | Show `seedSelector` for multi-field summaries and `.Index()` for tuple loop indexing. **Run Demo `04_Linq_Aggregations.cs`**. |
+| **17** | Mod 3 | LINQ `LeftJoin` (Single Key) | Compare 8 lines of `GroupJoin + SelectMany + DefaultIfEmpty` vs. 1 clean `LeftJoin` call. |
+| **18** | Mod 3 | LINQ Composite Joins & Limits | Show multi-property `new { TenantId, RegionCode }` joins and note the equi-join limitation. **Run Demo `05_Linq_Joins.cs`**. |
+| **19** | Mod 3 | `HybridCache` & JSON SourceGen | Explain stampede request coalescing with SQL/Oracle L2 and clarify that tags are optional. |
+| **20** | Mod 4 | Module 4 Divider | Minimal APIs, Validation & Contract Generation. |
+| **21** | Mod 4 | Options `ValidateOnStart()` | Fail-fast startup validation so missing `appsettings.json` values fail at deploy time, not at 2 AM. |
+| **22** | Mod 4 | Shared Model Validation | Show `OrderUpsertModel` validating both `POST` and `PUT` with `.NET 11` `IAsyncValidatableObject`. |
+| **23** | Mod 4 | `TypedResults` & OpenAPI 3.2 | Show `Results<Ok<T>, NotFound, ValidationProblem>` feeding `/openapi/v1.json` and Scalar UI. |
+| **24** | Mod 4 | Live Demo: MinimalApiDemo | **Run `MinimalApiDemo`**, open Scalar UI (`/scalar/v1`), and execute `requests.http` (`POST`, `PUT`, cache hits). |
+| **25** | Mod 4 | Bonus 1: React / Vite OpenAPI | Show `openapi-typescript` + `openapi-fetch` turning C# DTO changes into compile-time TypeScript errors. |
+| **26** | Mod 4 | Bonus 2: .NET Client CodeGen | Show `kiota generate` and `NSwag` for service-to-service typed C# HTTP clients. |
+| **27** | Mod 5 | Module 5 Divider | Runtime Engine & Upgrade Summary. |
+| **28** | Mod 5 | .NET 11 Runtime Async | Explain how CoreCLR native async removes state-machine noise from stack traces and cuts allocations. |
+| **29** | Mod 5 | Adoption Checklist | Summarize the highest-ROI features to adopt immediately across our Dapper + Minimal API + React stack. |
+| **30** | Mod 5 | Q&A & Command Reference | Leave on screen during Q&A so the team can see all demo commands at a glance. |

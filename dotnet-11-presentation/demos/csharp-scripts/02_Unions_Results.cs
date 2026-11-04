@@ -1,50 +1,45 @@
+#:property LangVersion=preview
 using System;
 
-// ============================================================================
-// Demo 02: C# 15 Union Types - Returning Results Without Exceptions
-// ============================================================================
-// Stored procedures and repositories often return multiple expected outcomes:
-// Found, Not Found, or Validation Error. Unions make these explicit.
+// Demo 02: C# 15 Union Types — Explicit Repository Results (.NET 11)
+// Run: dotnet run 02_Unions_Results.cs
 
-Console.WriteLine("--- C# 15 Unions: Explicit Result Handling ---");
+var repository = new OrderRepository();
 
-var repo = new OrderRepository();
+PrintOutcome(repository.GetOrder(101)); // Exists
+PrintOutcome(repository.GetOrder(999)); // Missing
+PrintOutcome(repository.GetOrder(-5));  // Invalid ID
 
-Handle(repo.GetOrder(101)); // Exists
-Handle(repo.GetOrder(999)); // Missing
-Handle(repo.GetOrder(-5));  // Invalid input
-
-static void Handle(OrderResult result)
+static void PrintOutcome(OrderResult result)
 {
-    string output = result switch
+    string line = result switch
     {
-        Success s => $"[OK] Order #{s.Order.Id} for '{s.Order.Customer}', Amount: {s.Order.Amount:C}",
-        NotFound nf => $"[404] Order #{nf.Id} was not found in the database",
-        ValidationError err => $"[400] Validation failed on '{err.Field}': {err.Message}"
+        Success s         => $"[200 OK] Order #{s.Order.Id} ({s.Order.Customer}) - {s.Order.Total:C}",
+        NotFound nf       => $"[404 Not Found] Order #{nf.OrderId} does not exist",
+        ValidationError v => $"[400 Bad Request] Invalid '{v.Field}': {v.Message}"
     };
 
-    Console.WriteLine(output);
+    Console.WriteLine(line);
 }
 
 public union OrderResult(Success, NotFound, ValidationError);
 
-public record Success(OrderDto Order);
-public record NotFound(int Id);
-public record ValidationError(string Field, string Message);
-
-public record OrderDto(int Id, string Customer, decimal Amount);
+public sealed record Success(OrderDto Order);
+public sealed record NotFound(int OrderId);
+public sealed record ValidationError(string Field, string Message);
+public sealed record OrderDto(int Id, string Customer, decimal Total);
 
 public class OrderRepository
 {
-    public OrderResult GetOrder(int id)
+    public OrderResult GetOrder(int orderId)
     {
-        if (id <= 0)
-            return new ValidationError("id", "ID must be a positive integer.");
+        if (orderId <= 0)
+            return new ValidationError(nameof(orderId), "Order ID must be greater than zero.");
 
-        // Simulate SQL stored procedure query:
-        if (id == 101)
-            return new Success(new OrderDto(101, "Acme Logistics", 420.00m));
+        // Simulated Dapper stored procedure lookup:
+        if (orderId == 101)
+            return new Success(new OrderDto(101, "Acme Corp", 4520.50m));
 
-        return new NotFound(id);
+        return new NotFound(orderId);
     }
 }

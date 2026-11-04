@@ -2,70 +2,87 @@
 marp: true
 theme: default
 paginate: true
-header: "What's new in .NET 11 | Modern .NET Features"
-footer: 'Minimal APIs • Dapper • React / Vite'
+header: "What's New in .NET 11 | Modern .NET & C# (8 – 11)"
+footer: 'ASP.NET Core Minimal APIs • Dapper • React / Vite'
 style: |
   section {
     background-color: #ffffff;
     color: #1f2328;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    padding: 36px 48px;
-    font-size: 23px;
+    padding: 34px 46px 42px 46px;
+    font-size: 21px;
+    line-height: 1.4;
     text-align: left;
     justify-content: flex-start;
   }
   h1 {
     color: #0969da;
-    font-size: 38px;
-    margin-bottom: 10px;
+    font-size: 34px;
+    margin: 0 0 6px 0;
+    padding-bottom: 0;
+    border-bottom: none;
     font-weight: 700;
   }
   h2 {
-    color: #1f2328;
-    font-size: 28px;
-    margin-bottom: 14px;
+    color: #4d5562;
+    font-size: 23px;
+    margin: 0 0 14px 0;
     border-bottom: 2px solid #d0d7de;
     padding-bottom: 6px;
     font-weight: 600;
   }
   h3 {
     color: #0969da;
-    font-size: 23px;
-    margin-top: 8px;
-    margin-bottom: 6px;
+    font-size: 20px;
+    margin: 8px 0 4px 0;
   }
   p, li {
-    font-size: 20px;
-    line-height: 1.45;
+    font-size: 19px;
+    line-height: 1.42;
     color: #1f2328;
   }
-  ul {
-    margin-top: 6px;
-    margin-bottom: 10px;
+  ul, ol {
+    margin: 4px 0 8px 0;
+    padding-left: 24px;
+  }
+  li + li {
+    margin-top: 4px;
   }
   code {
     background-color: #eff1f3;
     color: #cf222e;
-    padding: 2px 6px;
+    padding: 2px 5px;
     border-radius: 4px;
-    font-family: "JetBrains Mono", Consolas, monospace;
-    font-size: 19px;
+    font-family: Consolas, "JetBrains Mono", ui-monospace, monospace;
+    font-size: 88%;
   }
-  pre code {
-    background-color: #f6f8fa;
-    color: #1f2328;
-    font-size: 16px;
-    line-height: 1.35;
-    border-radius: 6px;
-    border: 1px solid #d0d7de;
-    padding: 10px 12px;
+  pre, marp-pre {
+    background-color: #f6f8fa !important;
+    border: 1px solid #d0d7de !important;
+    border-radius: 6px !important;
+    padding: 10px 14px !important;
+    margin: 6px 0 !important;
+    font-size: 14.5px !important;
+    line-height: 1.42 !important;
+    overflow: hidden !important;
+  }
+  pre code, marp-pre code {
+    background-color: transparent !important;
+    color: #1f2328 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-size: inherit !important;
+    line-height: inherit !important;
+    white-space: pre !important;
   }
   .badge {
     display: inline-block;
     padding: 2px 8px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
-    border-radius: 12px;
+    border-radius: 10px;
     text-transform: uppercase;
     vertical-align: middle;
     margin-left: 6px;
@@ -74,609 +91,908 @@ style: |
   .net9  { background-color: #0969da; color: #ffffff; }
   .net10 { background-color: #8250df; color: #ffffff; }
   .net11 { background-color: #cf222e; color: #ffffff; }
-  .demo-badge { background-color: #bf8700; color: #ffffff; }
   .grid-2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-top: 8px;
+    gap: 14px;
+    margin-top: 6px;
   }
   .box-before {
     background-color: #fff8f8;
     border: 1px solid #ff8182;
     border-radius: 6px;
-    padding: 10px;
+    padding: 8px 10px;
   }
   .box-after {
     background-color: #f6fff8;
     border: 1px solid #4ac26b;
     border-radius: 6px;
-    padding: 10px;
+    padding: 8px 10px;
   }
-  .box-before h4 { color: #cf222e; margin: 0 0 6px 0; font-size: 17px; }
-  .box-after h4 { color: #1a7f37; margin: 0 0 6px 0; font-size: 17px; }
-  .callout-box {
+  .box-before h4 { color: #cf222e; margin: 0 0 4px 0; font-size: 16px; }
+  .box-after h4 { color: #1a7f37; margin: 0 0 4px 0; font-size: 16px; }
+  .demo-bar {
     background-color: #ddf4ff;
     border-left: 4px solid #0969da;
-    padding: 8px 14px;
-    margin-top: 10px;
+    padding: 6px 12px;
+    margin-top: 8px;
     border-radius: 0 6px 6px 0;
+    font-size: 17px;
   }
-  .callout-box p { margin: 0; font-size: 19px; }
+  table {
+    font-size: 16.5px;
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 6px;
+  }
+  th, td {
+    padding: 6px 10px !important;
+    border: 1px solid #d0d7de !important;
+  }
+  th {
+    background-color: #f6f8fa !important;
+  }
 ---
 
 <!-- ===================================================================== -->
-<!-- SLIDE 1: TITLE                                                        -->
+<!-- SLIDE 1: TITLE SLIDE                                                  -->
 <!-- ===================================================================== -->
 
-# What's new in .NET 11
-## Practical Modern .NET Features for Minimal APIs, Dapper & React
+# What's New in .NET 11
+## Modern .NET & C# Features Across .NET 8, 9, 10 & 11
 
-A down-to-earth overview of practical features across **.NET 8, 9, 10, and 11** (C# 12–15).
-
-* **Focus Areas:**
-  * Reducing boilerplate in everyday C# code
-  * Working with in-memory data returned from Dapper stored procedures
-  * Cleaner request validation and endpoints in Minimal APIs
-  * Keeping API contracts in sync with React / Vite
+- **Target Tech Stack:**
+  - **Backend:** ASP.NET Core Minimal APIs (with Options Pattern) + Dapper calling SQL Stored Procedures
+  - **Frontend:** React + TypeScript built with Vite
+- **Core Objectives:**
+  - Reduce boilerplate in everyday C# models, repositories, and endpoints
+  - Shape flat `IEnumerable<T>` results from Dapper stored procedures in memory
+  - Automate API schema and client generation between Minimal APIs and React/Vite
+  - Understand what arrived in `.NET 8`, `.NET 9`, `.NET 10`, and `.NET 11`
 
 <!--
 SPEAKER NOTES:
-- Welcome everyone.
-- Keep tone grounded: we are focusing on features that make our day-to-day work simpler and reduce repetitive code.
-- No EF Core, Blazor, or MAUI—everything is tailored to our stack: Minimal APIs, Dapper calling stored procedures, and React with Vite.
-- Every feature has a version badge ([.NET 8], [.NET 9], [.NET 10], [.NET 11]) so you can see what is available today vs. with .NET 11.
+- Introduce the goal of the session: knowledge sharing across the features added from .NET 8 through .NET 11 (C# 12 to C# 15).
+- Everything in this deck is filtered specifically for our stack: Minimal APIs, Dapper + stored procedures, and React/Vite. (No EF Core, Blazor, or MAUI).
+- Each slide is badged with the .NET version where the feature was introduced so we know what can be used immediately in existing .NET 8 / 10 codebases vs. .NET 11.
 -->
 
 ---
 
 <!-- ===================================================================== -->
-<!-- SLIDE 2: ROADMAP                                                      -->
+<!-- SLIDE 2: AGENDA & MODULE MAP                                          -->
 <!-- ===================================================================== -->
 
-# Roadmap
-## 5 Focused Topics
+# Agenda & Topic Modules
+## Organized by Domain Area
 
-1. **Tooling & Setup:** The .NET 11 SDK, `.slnx` files, and single-file C# scripts
-2. **C# 15 & Language Features:** Union types, the `field` keyword, and collection expressions
-3. **Working with Data & Libraries:** LINQ aggregations, in-memory outer joins, and `HybridCache`
-4. **ASP.NET Core & Minimal APIs:** Shared model validation, OpenAPI 3.2, and frontend client generation
-5. **Runtime Under the Hood:** Native Runtime Async in .NET 11 and everyday takeaways
-
-<div class="callout-box">
-<p>💡 Small, focused live demos are embedded directly alongside each topic.</p>
-</div>
+1. **Module 1: Tooling, SDK & Release Cadence**
+   - STS 2-year support alignment, single-file C# scripts (`dotnet run file.cs`), and `.slnx` solution files
+2. **Module 2: Modern C# Language (C# 12 – 15)**
+   - C# 15 Union types, the `field` keyword, collection expressions, `?.=`, and DI constructor rules
+3. **Module 3: Data Shaping & Libraries (Working with Dapper Results)**
+   - Modern LINQ (`CountBy`, `AggregateBy`, `Index`, `LeftJoin`, `FullJoin`), `HybridCache`, and JSON/OpenAPI codegen
+4. **Module 4: ASP.NET Core & Minimal APIs (.NET 8 – 11)**
+   - Shared model validation (`IAsyncValidatableObject`), `TypedResults`, OpenAPI 3.2, and Options validation
+5. **Module 5: Under-the-Hood Runtime Improvements (.NET 8 – 11)**
+   - Native Runtime Async in CoreCLR and `FrozenDictionary` lookup caches
 
 <!--
 SPEAKER NOTES:
-- Give a brief overview of the topics.
-- We will look at practical syntax first, then data and APIs, and finally a quick look at the runtime changes.
-- Demos will be shown directly as each topic is discussed.
+- Walk through the 5 modules.
+- Note that live code demos are placed right after the concepts they illustrate (`01` through `05` in `demos/csharp-scripts/`, plus the `MinimalApiDemo` web project).
 -->
 
 ---
 
 <!-- ===================================================================== -->
-<!-- SLIDE 3: LIFECYCLE & SUPPORT                                          -->
+<!-- SLIDE 3: MODULE 1 DIVIDER                                             -->
 <!-- ===================================================================== -->
 
-# Lifecycle & Release Cadence <span class="badge net10">.NET 10 LTS</span> <span class="badge net11">.NET 11 STS</span>
-## Why .NET 11 Makes Sense for Modern Adoption
+# Module 1: Tooling, SDK & Release Cadence
+## .NET 11 Support Alignment, Single-File Apps & Visual Studio Tooling
 
-* **Microsoft's Updated Support Policy:**
-  * Starting with .NET 9, Microsoft extended Standard Term Support (STS) releases to **2 full years** of support.
-  * All major releases now target **November**.
-* **Support Alignment:**
-  * **.NET 10 (LTS):** Supported until **November 2028** (3 years).
-  * **.NET 11 (STS):** Supported until **November 2028** (2 years).
-* **The Result:**
-  * Both .NET 10 and .NET 11 reach end of support at the **exact same time** (November 2028).
-  * Adopting .NET 11 gives us the newest language features (like C# 15 Unions and Runtime Async) without cutting our support window short.
+- **2-Year STS Policy Change:** Why `.NET 11` and `.NET 10` share the same End-of-Support date
+- **File-Based C# Programs:** Running standalone `.cs` files with `#:property` and `#:package` directives
+- **Solution & IDE Upgrades:** XML-simplified `.slnx` solution files and Visual Studio Hot Reload
 
 <!--
 SPEAKER NOTES:
-- Explain why Microsoft's policy change is relevant: previously STS releases only had 18 months of support, which made teams hesitant.
-- Now STS is 2 years, aligning .NET 11's end-of-support to November 2028—the same month as .NET 10 LTS.
-- This gives us a comfortable runway to use .NET 11 features.
+- Module 1 covers SDK and Visual Studio tooling changes before we jump into C# syntax.
 -->
 
 ---
 
 <!-- ===================================================================== -->
-<!-- SLIDE 4: SINGLE-FILE C# APPS                                          -->
+<!-- SLIDE 4: SUPPORT LIFECYCLE ALIGNMENT                                  -->
 <!-- ===================================================================== -->
 
-# Single-File C# Apps <span class="badge net10">.NET 10</span> <span class="badge net11">.NET 11</span>
-## Running Standalone Scripts: `dotnet run script.cs`
+# .NET Release Cadence: STS vs. LTS <span class="badge net10">.NET 10 LTS</span> <span class="badge net11">.NET 11 STS</span>
+## Microsoft's 2-Year STS Policy Aligns .NET 10 and .NET 11 EOL
 
-Run any standalone `.cs` file directly from the terminal without creating a `.csproj` or project folder:
-
-```bash
-# Execute a single C# file directly:
-dotnet run FixCustomerData.cs
-
-# Pass preview language flags when testing new language features:
-dotnet run 01_Unions_Basics.cs -p:LangVersion=preview
-```
-
-* **Where this is useful:**
-  * Quick database maintenance scripts and data migration utilities
-  * Standalone test harnesses to verify a Dapper query or stored procedure
-  * Testing new C# features and language spikes without polluting the repository with project files
+- **Why STS Used to Be Avoided:**
+  - Previously, Standard Term Support (STS) releases only received **18 months** of support, ending in May—forcing upgrades mid-year.
+- **The Policy Change (Starting in .NET 9):**
+  - Microsoft extended STS support from 18 months to **24 months (2 full years)** so all releases end in **November**.
+- **What This Means for .NET 10 and .NET 11:**
+  - **.NET 10 (LTS):** 3 years of support (Nov 2025 – **November 14, 2028**)
+  - **.NET 11 (STS):** 2 years of support (Nov 2026 – **November 14, 2028**)
+  - Both reach End of Support on the **exact same date**, so adopting `.NET 11` gives us C# 15 and Runtime Async without shortening our support window.
 
 <!--
 SPEAKER NOTES:
-- Introduced in .NET 10 and refined in .NET 11.
-- No need to run `dotnet new console`, maintain a `.csproj` file, or clean up `bin/` and `obj/` folders for quick one-off tasks.
-- Perfect for developer utility scripts and test harnesses.
+- Explain the practical reason Microsoft changed STS from 18 months to 24 months: teams skipped odd-numbered releases because a May EOL was awkward to schedule.
+- Because .NET 10 (3 years from Nov 2025) and .NET 11 (2 years from Nov 2026) both end support in November 2028, targeting .NET 11 has the exact same support horizon as .NET 10.
 -->
 
 ---
 
 <!-- ===================================================================== -->
-<!-- SLIDE 5: MODERN SOLUTION FILES & VISUAL STUDIO                        -->
+<!-- SLIDE 5: FILE-BASED C# APPS                                           -->
 <!-- ===================================================================== -->
 
-# Project Tooling: `.slnx` & Hot Reload <span class="badge net9">.NET 9</span> <span class="badge net10">.NET 10</span>
-## Simpler Solutions and Smoother Visual Studio Iteration
-
-* **`.slnx` Solution Format:**
-  * Replaces legacy `.sln` files (which had obscure GUIDs and frequent git merge conflicts) with clean, readable XML:
-```xml
-<Solution>
-  <Folder Name="/Demos/">
-    <File Path="requests.http" />
-  </Folder>
-  <Project Path="MinimalApiDemo/MinimalApiDemo.csproj" />
-</Solution>
-```
-* **Visual Studio Hot Reload Improvements:**
-  * Hot Reload now supports modifying lambda expressions, adding methods, and editing Minimal API route handlers without having to stop and restart the debugging session.
-
-<!--
-SPEAKER NOTES:
-- `.slnx` is natively supported in Visual Studio 2022 (v17.10+) and .NET CLI.
-- No more painful git merge conflicts in `.sln` files when two developers add projects simultaneously.
-- Hot reload makes tweaking Minimal API routes in Visual Studio much faster.
--->
-
----
-
-<!-- ===================================================================== -->
-<!-- SLIDE 6: C# 15 UNIONS - OVERVIEW                                      -->
-<!-- ===================================================================== -->
-
-# C# 15 Union Types <span class="badge net11">.NET 11 / C# 15</span>
-## Modeling Closed Sets of Types Natively
-
-A `union` defines a closed set of permitted types. Unlike open inheritance, the compiler knows every possible case at build time:
-
-```csharp
-// Define an order's lifecycle states as a closed union
-public union OrderState(Pending, Shipped, Delivered, Cancelled);
-
-public record Pending(int OrderId, DateTime CreatedAt);
-public record Shipped(int OrderId, string TrackingNumber);
-public record Delivered(int OrderId, DateTime DeliveredAt);
-public record Cancelled(int OrderId, string Reason);
-```
-
-* **Exhaustive Pattern Matching:**
-  * In a `switch` expression, the compiler verifies that **all cases are handled**.
-  * No `default:` arm is required. If someone adds a 5th state in the future, the compiler will flag any unhandled `switch` expressions with an error.
-
-<!--
-SPEAKER NOTES:
-- Introduce unions conceptually: they are closed sum types (discriminated unions).
-- It's not just for return types—it's great for domain state machines, event types, and workflow steps.
-- Because the set of types is closed, the compiler enforces exhaustiveness on pattern matching.
--->
-
----
-
-<!-- ===================================================================== -->
-<!-- SLIDE 7: C# 15 UNIONS - RESULT PATTERN                                -->
-<!-- ===================================================================== -->
-
-# C# 15 Unions: Explicit Results <span class="badge net11">C# 15</span>
-## Handling Expected Outcomes Without Throwing Exceptions
+# File-Based C# Apps <span class="badge net10">.NET 10</span> <span class="badge net11">.NET 11</span>
+## Standalone Scripts with `dotnet run file.cs`
 
 <div class="grid-2">
 <div class="box-before">
-<h4>Before (Exceptions for Flow Control)</h4>
+<h4>Before .NET 10 (Required a .csproj File)</h4>
+
+```xml
+<!-- Had to maintain a separate .csproj file -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net11.0</TargetFramework>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.66" />
+  </ItemGroup>
+</Project>
+```
+</div>
+
+<div class="box-after">
+<h4>.NET 10 & 11 (Single .cs File with Directives)</h4>
+
+```csharp
+#:property LangVersion=preview
+#:package Dapper@2.1.66
+
+using Dapper;
+using Microsoft.Data.SqlClient;
+
+Console.WriteLine("Run directly via: dotnet run Script.cs");
+```
+</div>
+</div>
+
+- **`#:property` & `#:package` Directives:** Configure MSBuild properties, SDKs (`#:sdk Microsoft.NET.Sdk.Web`), and NuGet packages directly at the top of a standalone `.cs` file.
+- Run directly via `dotnet run Script.cs` (all our demo scripts use this format).
+
+<!--
+SPEAKER NOTES:
+- Point out the `#:property` and `#:package` directives at the top of the `.cs` file.
+- You no longer need a separate `.csproj` file just to test a Dapper query, run a utility script, or enable `<LangVersion>preview</LangVersion>`.
+- If you later want to convert a script into a full project in Visual Studio, you can run `dotnet project convert Script.cs`.
+-->
+
+---
+
+<!-- ===================================================================== -->
+<!-- SLIDE 6: MODERN SOLUTION FILES & VISUAL STUDIO                        -->
+<!-- ===================================================================== -->
+
+# Visual Studio & Solution Tooling <span class="badge net9">.NET 9</span> <span class="badge net10">.NET 10</span>
+## `.slnx` XML Solution Files & Hot Reload
+
+<div class="grid-2">
+<div class="box-before">
+<h4>Legacy .sln File (GUIDs & Merge Conflicts)</h4>
+
+```text
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api.csproj", "{8B2A...}"
+EndProject
+Global
+  GlobalSection(ProjectConfigurationPlatforms) = postSolution
+    {8B2A...}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {8B2A...}.Debug|Any CPU.Build.0 = Debug|Any CPU
+  EndGlobalSection
+EndGlobal
+```
+</div>
+
+<div class="box-after">
+<h4>Modern .slnx File (Clean XML)</h4>
+
+```xml
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="requests.http" />
+  </Folder>
+  <Project Path="MinimalApiDemo.csproj" />
+</Solution>
+```
+</div>
+</div>
+
+- **`.slnx` in Visual Studio & CLI:** Eliminates project GUIDs and configuration matrices, making Git diffs trivial and preventing `.sln` merge conflicts.
+- **Visual Studio Hot Reload:** Supports updating Minimal API route lambdas, modifying method bodies, and adding new methods while debugging without restarting the application.
+
+<!--
+SPEAKER NOTES:
+- Compare the old `.sln` format with `.slnx`.
+- `.slnx` only lists the projects and solution folders—no random GUIDs.
+- You can migrate existing solutions in Visual Studio ("Save Solution As -> XML Solution File (.slnx)") or via `dotnet sln migrate`.
+-->
+
+---
+
+<!-- ===================================================================== -->
+<!-- SLIDE 7: MODULE 2 DIVIDER                                             -->
+<!-- ===================================================================== -->
+
+# Module 2: Modern C# Language (C# 12 – 15)
+## Reducing Boilerplate & Modeling Domain Logic
+
+- **C# 15 Union Types (`.NET 11`):** Modeling domain states, events, and repository results with exhaustive `switch` expressions
+- **The `field` Keyword (`C# 14 / .NET 10`):** Semi-auto properties without explicit backing fields
+- **Collection Expressions & Null-Conditional Assignment (`C# 12–14`):** `[.. list]`, `?.=`, and extension blocks
+- **DI Constructor Guideline:** Why we avoid Primary Constructors on service classes
+
+<!--
+SPEAKER NOTES:
+- Module 2 focuses on everyday C# language features from C# 12 through C# 15.
+- We will show Union types first (and run Demos 01 and 02), then look at property/collection syntax (and run Demo 03).
+-->
+
+---
+
+<!-- ===================================================================== -->
+<!-- SLIDE 8: C# 15 UNION TYPES OVERVIEW                                   -->
+<!-- ===================================================================== -->
+
+# C# 15 Union Types <span class="badge net11">.NET 11 / C# 15</span>
+## Closed Type Sets & Exhaustive Pattern Matching
+
+A `union` declares a closed set of permitted case types. The compiler guarantees that a value is always one of the listed types:
+
+```csharp
+// Domain State Machine: Each state carries only the properties valid for that state
+public union OrderState(Pending, Paid, Shipped, Cancelled);
+
+public sealed record Pending(int OrderId, DateTime CreatedAt);
+public sealed record Paid(int OrderId, string TransactionId, decimal Amount);
+public sealed record Shipped(int OrderId, string Carrier, string TrackingNumber);
+public sealed record Cancelled(int OrderId, string Reason);
+```
+
+- **Where Unions Fit Well:**
+  - **Domain State Machines:** Order states (`Pending | Paid | Shipped | Cancelled`) without nullable columns that only apply to one state.
+  - **Polymorphic Domain Events / Messages:** Queue payloads (`OrderCreated | PaymentCaptured | ShipmentDispatched`).
+  - **Operation Outcomes:** Explicit return contracts (`Success | NotFound | ValidationError`).
+- **Compiler-Enforced Exhaustiveness:** A `switch` expression over an `OrderState` does not need a `_ =>` default arm—and if a new state is added later, the compiler flags every unhandled `switch`.
+
+<!--
+SPEAKER NOTES:
+- Emphasize that unions are a general-purpose modeling tool, not just for error handling.
+- In domain modeling, instead of having a single class with 10 nullable properties (`TrackingNumber?`, `CancellationReason?`, `TransactionId?`) and guessing which ones are populated, each state is its own record in the union.
+- When you pattern-match over the union, the compiler ensures every case is handled.
+-->
+
+---
+
+<!-- ===================================================================== -->
+<!-- SLIDE 9: UNIONS IN REPOSITORIES + DEMO 01 & 02                        -->
+<!-- ===================================================================== -->
+
+# C# 15 Unions: Explicit Results vs. Exceptions <span class="badge net11">C# 15</span>
+## Returning Repository Outcomes to Minimal APIs
+
+<div class="grid-2">
+<div class="box-before">
+<h4>Before (Exceptions or Null Ambiguity)</h4>
 
 ```csharp
 public OrderDto GetOrder(int id) {
-  var row = repo.QuerySingleOrDefault(id);
-  if (row == null) 
-    throw new NotFoundException($"Order {id}");
-  return row;
+    var row = conn.QuerySingleOrDefault<OrderDto>(...);
+    if (row is null)
+        throw new NotFoundException($"Order {id}");
+    return row;
 }
 
-// Caller:
+// Endpoint must know what exceptions to catch:
 try {
-  return Results.Ok(repo.GetOrder(id));
+    return Results.Ok(repo.GetOrder(id));
 } catch (NotFoundException ex) {
-  return Results.NotFound(ex.Message);
+    return Results.NotFound(ex.Message);
 }
 ```
 </div>
 
 <div class="box-after">
-<h4>With C# 15 Unions (Explicit Return)</h4>
+<h4>With C# 15 Union + Exhaustive Switch</h4>
 
 ```csharp
 public union OrderResult(Success, NotFound, ValidationError);
 
 public OrderResult GetOrder(int id) {
-  if (id <= 0) 
-    return new ValidationError("id", "Invalid");
-  var row = repo.QuerySingleOrDefault(id);
-  return row != null 
-    ? new Success(row) 
-    : new NotFound(id);
+    if (id <= 0)
+        return new ValidationError("id", "Invalid ID");
+    var row = conn.QuerySingleOrDefault<OrderDto>(...);
+    return row is not null ? new Success(row) : new NotFound(id);
 }
 
-// Caller: Compiler verifies all cases!
+// Endpoint: compiler enforces handling all 3 cases
 return repo.GetOrder(id) switch {
-  Success s         => TypedResults.Ok(s.Order),
-  NotFound nf       => TypedResults.NotFound(),
-  ValidationError v => TypedResults.BadRequest(v)
+    Success s         => TypedResults.Ok(s.Order),
+    NotFound nf       => TypedResults.NotFound(),
+    ValidationError v => TypedResults.BadRequest(v)
 };
 ```
 </div>
 </div>
 
-<div class="callout-box">
-<p>💻 <strong>Demo:</strong> <code>01_Unions_Basics.cs</code> (Domain states) & <code>02_Unions_Results.cs</code> (Result pattern)</p>
+<div class="demo-bar">
+💻 <strong>Live Demos:</strong> <code>dotnet run 01_Unions_DomainState.cs</code> &amp; <code>dotnet run 02_Unions_Results.cs</code>
 </div>
 
 <!--
 SPEAKER NOTES:
-- Show the contrast: "Not found" or "Validation failed" are regular business outcomes, not catastrophic exceptions.
-- Exceptions incur stack-trace unwinding overhead and hide return branches from the method signature.
+- Compare throwing exceptions for expected cases (like a missing row in a Dapper query) vs. returning a union.
+- With the union return type, the method signature explicitly documents every possible outcome, and each case implicitly converts to `OrderResult`.
 - [SWITCH TO DEMO]:
-  Run: `dotnet run dotnet-11-presentation/demos/csharp-scripts/01_Unions_Basics.cs -p:LangVersion=preview`
-  Run: `dotnet run dotnet-11-presentation/demos/csharp-scripts/02_Unions_Results.cs -p:LangVersion=preview`
-- Show how clean the code is and how the switch handles each case.
+  1. Open `demos/csharp-scripts/01_Unions_DomainState.cs` and run `dotnet run 01_Unions_DomainState.cs`. Show what happens if you comment out one case in the `switch` expression (compiler warning/error).
+  2. Open `demos/csharp-scripts/02_Unions_Results.cs` and run `dotnet run 02_Unions_Results.cs`.
 -->
 
 ---
 
 <!-- ===================================================================== -->
-<!-- SLIDE 8: THE FIELD KEYWORD                                            -->
+<!-- SLIDE 10: THE FIELD KEYWORD                                           -->
 <!-- ===================================================================== -->
 
 # The `field` Keyword <span class="badge net10">.NET 10 / C# 14</span>
-## Semi-Auto Properties Without Manual Backing Fields
+## Semi-Auto Properties Without Explicit Backing Fields
 
 <div class="grid-2">
 <div class="box-before">
 <h4>Before C# 14 (Manual Backing Field)</h4>
 
 ```csharp
-public class Product
+public class ProductModel
 {
     private string _sku = string.Empty;
+    private decimal _unitPrice;
 
     public string Sku
     {
         get => _sku;
-        set => _sku = value?.Trim()
-                           .ToUpperInvariant() 
+        set => _sku = value?.Trim().ToUpperInvariant()
                       ?? string.Empty;
+    }
+
+    public decimal UnitPrice
+    {
+        get => _unitPrice;
+        set => _unitPrice = value < 0m ? 0m : value;
     }
 }
 ```
 </div>
 
 <div class="box-after">
-<h4>With C# 14 `field` Keyword</h4>
+<h4>C# 14 (Contextual `field` Keyword)</h4>
 
 ```csharp
-public class Product
+public class ProductModel
 {
     public string Sku
     {
         get => field;
-        set => field = value?.Trim()
-                            .ToUpperInvariant() 
+        set => field = value?.Trim().ToUpperInvariant()
                        ?? string.Empty;
     } = string.Empty;
+
+    public decimal UnitPrice
+    {
+        get => field;
+        set => field = value < 0m ? 0m : value;
+    }
 }
 ```
 </div>
 </div>
 
-* `field` provides a compiler-synthesized backing store inside the accessor body.
-* Eliminates the need to declare extra private fields just to trim whitespace, clamp values, or perform basic property validation.
-
-<div class="callout-box">
-<p>💻 <strong>Demo:</strong> <code>03_Field_Keyword.cs</code></p>
-</div>
+- **`field` Keyword:** Refers to the compiler-generated backing field directly inside `get`, `set`, or `init` accessors.
+- Keeps the backing storage private to the property itself (no other method in the class can bypass the setter by touching `_sku`).
 
 <!--
 SPEAKER NOTES:
-- A very practical quality-of-life improvement.
-- Previously, adding a single `.Trim()` or check forced you to convert an auto-property into 6 lines of code with a separate backing field.
-- [SWITCH TO DEMO]:
-  Run: `dotnet run dotnet-11-presentation/demos/csharp-scripts/03_Field_Keyword.cs -p:LangVersion=preview`
+- Whenever we needed to trim strings, normalize casing, or guard against negative numbers on a DTO property, we previously had to write a private field and expand both `get` and `set`.
+- Also note the encapsulation benefit: with a manual `_sku` field, other methods inside the class could accidentally write to `_sku` directly and bypass the setter logic. With `field`, the backing field is scoped strictly to the property accessors.
 -->
 
 ---
 
 <!-- ===================================================================== -->
-<!-- SLIDE 9: COLLECTION EXPRESSIONS                                       -->
+<!-- SLIDE 11: COLLECTION EXPRESSIONS & NULL-CONDITIONAL ASSIGNMENT        -->
 <!-- ===================================================================== -->
 
-# Collection Expressions & Spans <span class="badge net8">.NET 8</span> <span class="badge net9">.NET 9</span>
-## Cleaner Syntax and Zero-Allocation Parameters
+# Collection Expressions & `?.=` <span class="badge net8">.NET 8</span> <span class="badge net10">.NET 10</span>
+## Cleaner Everyday Syntax (C# 12 – 14)
 
-* **Collection Expressions `[.. list]` <span class="badge net8">C# 12</span>:**
-  * Unified syntax for arrays, spans, and lists with the spread operator:
+<div class="grid-2">
+<div class="box-before">
+<h4>Before (Verbose Initialization & Null Checks)</h4>
+
 ```csharp
-int[] baseCategories = [10, 20, 30];
-int[] seasonalCategories = [50, 60];
+// Merging collections required Concat / ToList:
+var allIds = baseIds
+    .Concat(new[] { 999 })
+    .Concat(extraIds)
+    .ToArray();
 
-// Combines collections cleanly without Concat() or AddRange():
-int[] allCategories = [.. baseCategories, 99, .. seasonalCategories];
+// Conditional property assignment required if-block:
+if (activeOrder is not null)
+{
+    activeOrder.Status = "Processed";
+}
 ```
-
-* **`params ReadOnlySpan<T>` <span class="badge net9">C# 13</span>:**
-  * In earlier C# versions, calling a method with `params` always allocated a heap array.
-  * With `params ReadOnlySpan<T>`, arguments are passed directly on the stack with zero heap allocations:
-```csharp
-public void LogTags(params ReadOnlySpan<string> tags) { /* Stack allocated */ }
-```
-
-<div class="callout-box">
-<p>💻 <strong>Demo:</strong> <code>04_Collection_Expressions.cs</code></p>
 </div>
+
+<div class="box-after">
+<h4>Modern C# (Spread `[..]` & `?.=`)</h4>
+
+```csharp
+// [C# 12] Collection expression + spread operator:
+int[] allIds = [.. baseIds, 999, .. extraIds];
+List<string> tags = ["Urgent", "Dapper"];
+
+// [C# 14] Null-conditional assignment:
+activeOrder?.Status = "Processed";
+```
+</div>
+</div>
+
+- **Collection Expressions (`[..]`):** Works uniformly across `T[]`, `List<T>`, `IEnumerable<T>`, and `ReadOnlySpan<T>`.
+- **Null-Conditional Assignment (`?.=`):** Evaluates the right-hand side and assigns only when the left-hand target is non-null.
+- **Extension Blocks (`extension(T)` in C# 14):** Allows adding extension **properties** (not just methods) to existing types.
 
 <!--
 SPEAKER NOTES:
-- Collection expressions replace ugly `new List<int>()` and `new[] { ... }`.
-- Spread operator `[..]` makes merging lists simple and readable.
-- `params ReadOnlySpan<T>` is a nice bonus: calling a method with variable arguments no longer creates a hidden heap array.
-- [SWITCH TO DEMO]:
-  Run: `dotnet run dotnet-11-presentation/demos/csharp-scripts/04_Collection_Expressions.cs -p:LangVersion=preview`
+- Collection expressions `[..]` are one of the highest-frequency syntax improvements in C# 12+: empty collections are simply `[]`, and merging lists uses `[.. listA, .. listB]`.
+- In C# 14 (.NET 10), `?.` can now appear on the left-hand side of an assignment (`activeOrder?.Status = "Processed"`).
 -->
 
 ---
 
 <!-- ===================================================================== -->
-<!-- SLIDE 10: ARCHITECTURE NOTE: PRIMARY CONSTRUCTORS                     -->
+<!-- SLIDE 12: PRIMARY CONSTRUCTORS IN DI + DEMO 03                        -->
 <!-- ===================================================================== -->
 
 # Architecture Guideline: Primary Constructors
-## ⚠️ Why We Avoid Primary Constructors in DI Service Classes
+## Why We Avoid Primary Constructors on DI Service Classes
 
 ```csharp
-// ❌ Avoid in Service Classes with Dependency Injection:
-public class OrderService(IDapperRepository repository, ILogger<OrderService> logger)
+// ❌ Avoid on DI services: captured parameters are mutable and cannot be marked 'readonly'
+public class OrderService(IDapperOrderRepository repository, ILogger<OrderService> logger)
 {
-    public async Task ProcessOrder()
+    public async Task ProcessAsync(int id)
     {
-        // 'repository' is NOT readonly! It can be reassigned inside any method.
-        // It acts as a mutable captured variable across the class.
+        // 'repository' is a mutable private field under the hood — it can be overwritten:
+        // repository = null!; <-- Compiles without error!
     }
 }
 ```
 
-* **The Problem:**
-  * Primary constructors are great for immutable records (`public record OrderDto(...)`).
-  * In service classes, captured constructor parameters **cannot be marked `readonly`**.
-* **Our Team Standard:**
-  * Use explicit `private readonly IDapperRepository _repo;` in DI services.
-  * This guarantees immutability and makes dependency storage clear.
+- **Where Primary Constructors Are Great:** Data structures, DTOs, and immutable `record` types (`public sealed record OrderDto(int Id, string Customer);`).
+- **Why We Skip Them for DI Services:** Captured primary constructor parameters **cannot be marked `readonly`**. Stick to explicit `private readonly` fields in services so dependencies remain immutable.
+
+<div class="demo-bar">
+💻 <strong>Live Demo:</strong> <code>dotnet run 03_LanguageFeatures.cs</code> (<code>field</code> keyword, <code>[.. list]</code>, and <code>?.=</code>)
+</div>
 
 <!--
 SPEAKER NOTES:
-- It's tempting to use primary constructors everywhere because they save a few lines of code.
-- But in DI services, captured parameters remain mutable in class scope and cannot be marked readonly.
-- For services, stick to explicit private readonly fields. For DTOs and records, primary constructors are great.
+- Clarify the distinction: primary constructors on `record` types generate `init`-only properties, which is great.
+- On regular `class` services, primary constructor parameters are captured as mutable fields with no `readonly` modifier allowed.
+- [SWITCH TO DEMO]:
+  Run `dotnet run 03_LanguageFeatures.cs` in `demos/csharp-scripts/`.
 -->
 
 ---
 
 <!-- ===================================================================== -->
-<!-- SLIDE 11: LINQ AGGREGATIONS                                           -->
+<!-- SLIDE 13: MODULE 3 DIVIDER                                            -->
 <!-- ===================================================================== -->
 
-# LINQ Aggregations <span class="badge net9">.NET 9</span>
-## Faster Frequency Counting & Running Totals
+# Module 3: Data Shaping & Libraries
+## Working with Flat Dapper Stored Procedure Results
 
-* **`CountBy`:** Counts occurrences per key in a single streaming pass (replaces `.GroupBy()`):
+- **Modern LINQ Aggregations (`.NET 9`):** `CountBy`, `AggregateBy`, and `Index`
+- **Modern LINQ Outer Joins (`.NET 10 & 11`):** `LeftJoin`, composite-key joins, and `FullJoin`
+- **Caching Stored Procedure Outputs (`.NET 9–11`):** Stampede protection with `HybridCache`
+- **JSON & OpenAPI Code Generation:** `System.Text.Json` source generation & automatic TypeScript/C# API clients
+
+<!--
+SPEAKER NOTES:
+- In our architecture, Dapper executes stored procedures and returns flat rowsets (`IEnumerable<T>`).
+- Module 3 covers the library improvements for aggregating, joining, caching, and serializing those results.
+-->
+
+---
+
+<!-- ===================================================================== -->
+<!-- SLIDE 14: MODERN LINQ AGGREGATIONS                                    -->
+<!-- ===================================================================== -->
+
+# Modern LINQ: `CountBy`, `AggregateBy` & `Index` <span class="badge net9">.NET 9</span>
+## Aggregating Without Intermediate `GroupBy` Allocations
+
+<div class="grid-2">
+<div class="box-before">
+<h4>Before .NET 9 (GroupBy + Select / ToDictionary)</h4>
+
 ```csharp
-// Returns key-value pairs of customer and count:
-var orderCounts = orders.CountBy(o => o.Customer);
+// Allocates intermediate IGrouping<TKey, TElement> buckets:
+var counts = orderLines
+    .GroupBy(x => x.Customer)
+    .ToDictionary(g => g.Key, g => g.Count());
+
+var spend = orderLines
+    .GroupBy(x => x.Customer)
+    .ToDictionary(
+        g => g.Key,
+        g => g.Sum(x => x.Quantity * x.UnitPrice)
+    );
 ```
+</div>
 
-* **`AggregateBy`:** Computes running totals per key:
+<div class="box-after">
+<h4>.NET 9 (Single-Pass Key Aggregation)</h4>
+
 ```csharp
-// `seed: 0m` is the starting decimal accumulator value:
-var totals = orders.AggregateBy(
-    keySelector: o => o.Customer,
+// 1. CountBy: Frequency count per key
+var counts = orderLines.CountBy(x => x.Customer);
+
+// 2. AggregateBy: Accumulate value per key
+//    seed: 0m is the initial decimal (0.00) per customer
+var spend = orderLines.AggregateBy(
+    keySelector: x => x.Customer,
     seed: 0m,
-    func: (currentTotal, o) => currentTotal + (o.Quantity * o.Price)
+    func: (runningTotal, x) =>
+        runningTotal + (x.Quantity * x.UnitPrice)
 );
 ```
+</div>
+</div>
 
-* **`Index()`:** Retrieves the zero-based index alongside each item without maintaining an extra `int i = 0; i++` counter:
-```csharp
-foreach (var (index, item) in orders.Index()) {
-    Console.WriteLine($"Line #{index + 1}: {item.Product}");
-}
-```
+- **`seed: 0m` in `AggregateBy`:** Defines the starting value for each key's accumulator (`0m` is C#'s `decimal` zero literal for currency). For each matching row, `func` adds the row's amount to `runningTotal`.
+- **`Index()` (`.NET 9`):** `foreach (var (index, line) in orderLines.Index())` yields `(int Index, T Item)` tuples when you need an element's position alongside the item itself, replacing manual `int i = 0; i++` counters.
 
-<div class="callout-box">
-<p>💻 <strong>Demo:</strong> <code>05_Linq_Aggregations.cs</code></p>
+<div class="demo-bar">
+💻 <strong>Live Demo:</strong> <code>dotnet run 04_Linq_Aggregations.cs</code>
 </div>
 
 <!--
 SPEAKER NOTES:
-- Explain why CountBy is great: previously you had to do `.GroupBy(x => x.Customer).ToDictionary(g => g.Key, g => g.Count())`, which allocated intermediate group objects.
-- AggregateBy does running accumulation per key. Clarify that `seed: 0m` is simply the starting decimal amount (0.00).
-- Index() is a nice helper when you need the index of an element alongside the element itself.
+- Walk through `CountBy` and `AggregateBy`.
+- Point out `seed: 0m`: whenever a new customer key is encountered, its total starts at `0m` (decimal zero), and each order line updates that customer's running total.
+- Show `Index()`: useful whenever you iterate a list and need the 0-based position alongside the element (for example, setting a `LineNumber` or logging).
 - [SWITCH TO DEMO]:
-  Run: `dotnet run dotnet-11-presentation/demos/csharp-scripts/05_Linq_Aggregations.cs -p:LangVersion=preview`
+  Run `dotnet run 04_Linq_Aggregations.cs`.
 -->
 
 ---
 
 <!-- ===================================================================== -->
-<!-- SLIDE 12: LINQ OUTER JOINS                                            -->
+<!-- SLIDE 15: MODERN LINQ OUTER JOINS                                     -->
 <!-- ===================================================================== -->
 
-# In-Memory Outer Joins: `LeftJoin` <span class="badge net10">.NET 10</span>
-## Joining In-Memory Datasets After Dapper Queries
+# Modern LINQ: `LeftJoin`, `RightJoin` & `FullJoin` <span class="badge net10">.NET 10</span> <span class="badge net11">.NET 11</span>
+## Joining Two Stored Procedure Result Sets in Memory
 
-Joins two collections in memory. If an item on the right side is missing, it evaluates to `null`:
+<div class="grid-2">
+<div class="box-before">
+<h4>Before .NET 10 (GroupJoin + DefaultIfEmpty)</h4>
 
 ```csharp
-// 1. Single-property join (matching on Sku):
-var enriched = orders.LeftJoin(
-    catalog,
-    order => order.Sku,
-    prod  => prod.Sku,
-    (order, prod) => new { order.OrderId, Title = prod?.Title ?? "Uncataloged" }
-);
+var enriched =
+    from line in orderLines
+    join prod in catalog
+      on line.Sku equals prod.Sku into prodGroup
+    from prod in prodGroup.DefaultIfEmpty()
+    select new {
+        line.OrderId,
+        line.Sku,
+        Title = prod?.Title ?? "[Missing]"
+    };
+```
+</div>
 
-// 2. Composite key join (matching on TenantId AND Sku using an anonymous object):
-var multiJoined = orders.LeftJoin(
+<div class="box-after">
+<h4>.NET 10 & 11 (First-Class Outer Join Methods)</h4>
+
+```csharp
+// [.NET 10] Native LeftJoin (prod is null if unmatched):
+var enriched = orderLines.LeftJoin(
     catalog,
-    order => new { order.TenantId, order.Sku },
-    prod  => new { prod.TenantId, prod.Sku },
-    (order, prod) => new { order.OrderId, Title = prod?.Title ?? "Unassigned" }
+    line => line.Sku,
+    prod => prod.Sku,
+    (line, prod) => new {
+        line.OrderId,
+        line.Sku,
+        Title = prod?.Title ?? "[Missing]"
+    }
 );
 ```
-
-* **What it can & cannot do:**
-  * **CAN:** Join on single keys or composite keys (`new { ... }`) using equality.
-  * **CANNOT:** Perform non-equality joins (e.g. date ranges). For non-equality conditions, use SQL or `.Where()`.
-
-<div class="callout-box">
-<p>💻 <strong>Demo:</strong> <code>06_Linq_LeftJoin.cs</code></p>
 </div>
+</div>
+
+- **Why Join in C#?** When a stored procedure returns multiple result sets (`QueryMultipleAsync`) or when combining Dapper rows with cached reference data in memory.
+- **`.NET 10`:** Added `LeftJoin` and `RightJoin` to `System.Linq.Enumerable`.
+- **`.NET 11`:** Added `FullJoin` (retaining unmatched rows from *both* the left and right collections).
 
 <!--
 SPEAKER NOTES:
-- Pre-.NET 10, left joins required `GroupJoin` + `SelectMany` + `DefaultIfEmpty()`.
-- Now `LeftJoin` is a first-class method on IEnumerable<T>.
-- Address the review question: Can it join on multiple properties? Yes! You match on an anonymous object or tuple `new { order.TenantId, order.Sku }`.
-- [SWITCH TO DEMO]:
-  Run: `dotnet run dotnet-11-presentation/demos/csharp-scripts/06_Linq_LeftJoin.cs -p:LangVersion=preview`
+- Previously, writing a left outer join in LINQ required `GroupJoin` + `SelectMany` + `DefaultIfEmpty()`, which nobody could write from memory.
+- In .NET 10, `LeftJoin` and `RightJoin` are standard LINQ methods with the exact same parameter order as `Join`.
 -->
 
 ---
 
 <!-- ===================================================================== -->
-<!-- SLIDE 13: HYBRIDCACHE                                                 -->
+<!-- SLIDE 16: LEFTJOIN COMPOSITE KEYS & CAPABILITIES + DEMO 05            -->
+<!-- ===================================================================== -->
+
+# `LeftJoin`: Multiple Conditions & Capabilities <span class="badge net10">.NET 10</span>
+## Joining on Composite Keys and Understanding Limits
+
+```csharp
+// Joining on MULTIPLE properties: return an anonymous object (or tuple) in both key selectors
+var regionalJoin = orders.LeftJoin(
+    catalog,
+    order => new { order.TenantId, order.Sku }, // Left composite key
+    prod  => new { prod.TenantId,  prod.Sku  }, // Right composite key
+    (order, prod) => new
+    {
+        order.OrderId,
+        order.TenantId,
+        ProductTitle = prod?.Title ?? "[No matching regional product]"
+    }
+);
+```
+
+- **How Multi-Condition Joins Work:** Anonymous types (`new { a, b }`) and value tuples (`(a, b)`) implement structural `Equals` and `GetHashCode` automatically, so LINQ hashes and matches all properties together.
+- **What `LeftJoin` CAN Do:** Single keys, multi-property composite keys, and custom `IEqualityComparer<TKey>` (e.g., `StringComparer.OrdinalIgnoreCase`).
+- **What `LeftJoin` CANNOT Do:** Non-equality conditions (such as `order.Date >= promo.Start && order.Date <= promo.End`). Non-equi joins must be done in the SQL stored procedure or via `.Where()`.
+
+<div class="demo-bar">
+💻 <strong>Live Demo:</strong> <code>dotnet run 05_Linq_Joins.cs</code> (Single key, Composite key &amp; <code>FullJoin</code>)
+</div>
+
+<!--
+SPEAKER NOTES:
+- Explain how multi-column joins work in LINQ: C# anonymous types override `Equals` and `GetHashCode` across all their properties, so `new { order.TenantId, order.Sku }` acts as a composite hash key in `LeftJoin`.
+- Also be clear about the limitation: like `Enumerable.Join`, `LeftJoin` is a hash equi-join (it only matches `keyA == keyB`), so range joins (`BETWEEN`, `<`, `>`) belong in SQL.
+- [SWITCH TO DEMO]:
+  Run `dotnet run 05_Linq_Joins.cs`.
+-->
+
+---
+
+<!-- ===================================================================== -->
+<!-- SLIDE 17: HYBRIDCACHE                                                 -->
 <!-- ===================================================================== -->
 
 # Caching Stored Proc Results: `HybridCache` <span class="badge net9">.NET 9</span> <span class="badge net11">.NET 11</span>
-## Two-Tier Caching & Stampede Protection
+## Preventing Database Cache Stampedes
 
-`HybridCache` combines fast in-memory RAM (L1) with an external database/store (e.g. SQL / Oracle DB):
+- **The Problem with `IMemoryCache`:** When a cached key expires under load, 50 concurrent HTTP requests will all see a cache miss and execute the same SQL / Oracle DB stored procedure simultaneously (*Cache Stampede*).
+- **How `HybridCache` Solves It:** Coalesces concurrent callers per key—**only 1 request executes the Dapper query**, while the other 49 await the same task and receive the result.
 
 ```csharp
-// 1. Checks fast RAM; 2. Checks DB store; 3. Executes factory with locking:
+// Minimal usage (tags are optional):
 var orders = await hybridCache.GetOrCreateAsync(
     $"customer-orders-{customerId}",
-    async cancel => await dapperRepo.GetOrdersByCustomerIdAsync(customerId, cancel),
-    tags: [$"customer-{customerId}"], // Tags are completely OPTIONAL
+    async ct => await dapperRepo.GetOrdersByCustomerIdAsync(customerId, ct),
+    cancellationToken: ct
+);
+
+// Optional: attach tags if you want to invalidate a group of keys later
+var taggedOrders = await hybridCache.GetOrCreateAsync(
+    $"customer-orders-{customerId}",
+    async ct => await dapperRepo.GetOrdersByCustomerIdAsync(customerId, ct),
+    tags: [$"customer-{customerId}", "orders"], // Optional parameter
     cancellationToken: ct
 );
 ```
 
-* **Solving the "Cache Stampede":**
-  * If 50 concurrent requests ask for the same customer when the cache expires, **only 1 request queries the database**. The other 49 wait and share the result.
-* **Optional Tag Eviction:**
-  * When updating an order, you can invalidate all cached items for that customer at once:
-```csharp
-await hybridCache.RemoveByTagAsync([$"customer-{customerId}"], ct);
-```
-
 <!--
 SPEAKER NOTES:
-- Explain the real problem: cache stampede / thundering herd. With IMemoryCache, when a key expires under load, 50 requests all hit SQL/Oracle DB at the same time.
-- HybridCache provides atomic locking so only one query runs.
-- Emphasize that `tags` are completely optional—you only use them if you want tag-based invalidation.
+- Highlight the main reason to use `HybridCache` over raw `IMemoryCache`: stampede protection (request coalescing) is built in.
+- If 50 requests arrive for the same uncached key at the same millisecond, your SQL or Oracle database only runs the stored procedure once.
+- Point out that `tags` are completely optional—only pass them if you want to evict related keys together via `RemoveByTagAsync`.
 -->
 
 ---
 
 <!-- ===================================================================== -->
-<!-- SLIDE 14: SYSTEM.TEXT.JSON & SOURCE GENERATION                        -->
+<!-- SLIDE 18: SYSTEM.TEXT.JSON IMPROVEMENTS                               -->
 <!-- ===================================================================== -->
 
-# System.Text.Json: Source Generation <span class="badge net8">.NET 8</span> <span class="badge net11">.NET 11</span>
-## Compile-Time Serialization vs. Runtime Reflection
+# `System.Text.Json`: Source Generation & Contracts <span class="badge net9">.NET 9</span> <span class="badge net11">.NET 11</span>
+## Compile-Time Serialization & Strict Schema Options
 
-By default, serializers use runtime reflection (`System.Reflection`) to inspect property types on every request. **JSON Source Generation** shifts this work to compile time:
+<div class="grid-2">
+<div class="box-before">
+<h4>Default Reflection Serializer</h4>
+
+- Inspects DTO properties via `System.Reflection` at runtime on the first request.
+- Serialization configuration issues (e.g., unsupported types or cycles) are only discovered at runtime when an endpoint is hit.
+</div>
+
+<div class="box-after">
+<h4>Compile-Time Source Generator</h4>
 
 ```csharp
-// Generates serialization code during build:
-[JsonSerializable(typeof(OrderDto))]
-[JsonSerializable(typeof(List<OrderDto>))]
-public partial class AppJsonContext : JsonSerializerContext { }
+[JsonSourceGenerationOptions(
+    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
+    RespectNullableAnnotations = true)]
+[JsonSerializable(typeof(IReadOnlyList<OrderDto>))]
+internal partial class AppJsonContext : JsonSerializerContext;
 ```
+</div>
+</div>
 
-* **Why Source Generation Helps:**
-  * **Build-Time Verification:** Catches unsupported types or serialization issues during compilation rather than failing in production.
-  * **Faster Cold Starts:** Eliminates reflection inspection when an API container spins up.
-  * **Trim & NativeAOT Safe:** Guarantees that the code can be trimmed without breaking serialization.
+- **What `JsonSerializerContext` Actually Does:** A Roslyn source generator writes the exact property-by-property UTF-8 serialization C# code at **compile time**—eliminating runtime reflection and warming overhead.
+- **`.NET 9–11` Additions:**
+  - **`RespectNullableAnnotations = true`:** Throws a validation error if a JSON payload passes `null` into a non-nullable C# property (`string Sku` vs `string? Notes`).
+  - **`[JsonPolymorphic]` / Discriminated Unions:** Emits a `"$type"` discriminator property for nested polymorphic properties (note: keep top-level endpoint responses consistent per status code using `TypedResults`).
 
 <!--
 SPEAKER NOTES:
-- Clarify what JSON source generation actually is: Roslyn generates the serializer code at compile time.
-- Reflection is fine for small scripts, but in production APIs source generation guarantees that serialization logic is verified at compile time.
+- Explain specifically what JSON source generation does: instead of inspecting properties via reflection at runtime, Roslyn generates the C# serialization code during build.
+- Also highlight `RespectNullableAnnotations` (.NET 9+): previously, even if a C# record had `string Sku` (non-nullable), `System.Text.Json` happily deserialized `{"sku": null}` into `null`. Enabling `RespectNullableAnnotations` enforces non-nullable properties during deserialization.
+- On union/polymorphic JSON: useful for nested polymorphic fields inside a DTO, whereas for endpoint responses we should return consistent DTO shapes per HTTP status code rather than varying 200 OK shapes.
 -->
 
 ---
 
 <!-- ===================================================================== -->
-<!-- SLIDE 15: BONUS - OPENAPI CLIENT & MODEL GENERATION                   -->
+<!-- SLIDE 19: BONUS - OPENAPI TO REACT / VITE CODEGEN                     -->
 <!-- ===================================================================== -->
 
-# API Contract Automation <span class="badge net9">.NET 9</span> <span class="badge net11">.NET 11</span>
-## Generating TypeScript & C# Models from OpenAPI
+# Bonus: Generating React / Vite Models from OpenAPI
+## Eliminating Hand-Written TypeScript DTOs
 
-Instead of manually duplicating C# models into TypeScript interfaces in React/Vite, let the OpenAPI document drive generation:
+Instead of manually maintaining duplicate TypeScript interfaces in our React/Vite repo whenever a C# DTO changes, generate them directly from the Minimal API's OpenAPI spec:
 
-* **In React / Vite (TypeScript):**
-  * Tools like `openapi-typescript` and `openapi-fetch` read `/openapi/v1.json` directly and generate exact TypeScript types:
 ```bash
-# In your Vite project:
+# 1. Generate TypeScript types from the .NET OpenAPI spec (openapi-typescript):
 npx openapi-typescript http://localhost:5248/openapi/v1.json -o src/api/schema.d.ts
 ```
-  * In React components, API responses are **100% type-safe**. If a C# property name changes, TypeScript fails at build time!
 
-* **In .NET (Client Services):**
-  * Tools like Microsoft Kiota or Refit generate typed HTTP client methods directly from the OpenAPI spec:
-```bash
-kiota generate --openapi http://localhost:5248/openapi/v1.json --language CSharp
+```typescript
+// 2. Use with a lightweight typed wrapper (openapi-fetch) in React / Vite:
+import createClient from "openapi-fetch";
+import type { paths } from "./api/schema";
+
+const api = createClient<paths>({ baseUrl: "http://localhost:5248" });
+
+// Path parameters, request body, and return models are 100% inferred from .NET:
+const { data, error } = await api.GET("/api/customers/{customerId}/orders", {
+  params: { path: { customerId: 1 } }
+});
+// 'data' is automatically typed as OrderDto[] | undefined!
 ```
+
+- **Why This Matters:** If a backend developer renames a property on `OrderDto` in C#, running `npm run build` in Vite immediately flags the exact React component line with a TypeScript compile error.
 
 <!--
 SPEAKER NOTES:
-- Emphasize the practical win: no more hand-writing and updating TypeScript interfaces in React!
-- When backend changes a model in Minimal APIs, running `openapi-typescript` immediately flags any frontend breaking changes.
-- Eliminates manual sync headaches between backend and frontend teams.
+- This is a high-leverage workflow improvement for our stack.
+- Because Minimal APIs with `TypedResults` generate an accurate `openapi/v1.json` document automatically, the React/Vite frontend can generate `schema.d.ts` from it (or use `orval` if we want generated TanStack Query hooks).
+- We never have to manually write `interface OrderDto` in TypeScript again, and return types match what the backend actually sends.
 -->
 
 ---
 
 <!-- ===================================================================== -->
-<!-- SLIDE 16: SHARED MODEL VALIDATION                                     -->
+<!-- SLIDE 20: BONUS - OPENAPI TO .NET CLIENT CODEGEN                      -->
 <!-- ===================================================================== -->
 
-# Model-Level Validation <span class="badge net10">.NET 10</span> <span class="badge net11">.NET 11</span>
-## Why Validation Belongs on the Model
+# Bonus: Generating C# Clients from OpenAPI in .NET
+## Typed Service-to-Service Calls Without Manual `HttpClient` Boilerplate
 
-Putting validation rules on the request model ensures they apply consistently across **INSERT (POST)** and **UPDATE (PUT)**, as well as programmatic assignments:
+When one .NET service calls another internal API, we can generate the C# models and typed client directly from its OpenAPI specification:
+
+```xml
+<!-- Option A: Built-in MSBuild OpenApiReference in .csproj (NSwag) -->
+<ItemGroup>
+  <OpenApiReference Include="openapi.json" Namespace="OrdersClient" ClassName="OrdersApiClient" />
+</ItemGroup>
+```
 
 ```csharp
+// Option B: Kiota / NSwag / Refit generated client usage in DI:
+builder.Services.AddHttpClient<IOrdersApiClient, OrdersApiClient>(
+    client => client.BaseAddress = new Uri("https://orders-api.internal"));
+
+// Calling the API uses strongly-typed models and return types automatically:
+IReadOnlyList<OrderDto> orders = await ordersClient.GetCustomerOrdersAsync(customerId: 1, ct);
+```
+
+- **Consistent Workflow Across Stack:** The Minimal API's OpenAPI document becomes the single source of truth for **both** React/Vite TypeScript clients and .NET C# clients.
+
+<!--
+SPEAKER NOTES:
+- Just like on the React side, if one .NET service calls another API, we don't need to hand-write `HttpClient.GetFromJsonAsync<OrderDto>("/api/...")` and duplicate the DTO classes.
+- Adding an `<OpenApiReference>` in Visual Studio (Connected Services -> OpenAPI) or using Kiota/Refit generates the models and typed client methods automatically.
+-->
+
+---
+
+<!-- ===================================================================== -->
+<!-- SLIDE 21: SEQUENTIAL IDENTIFIERS: GUID V7                             -->
+<!-- ===================================================================== -->
+
+# Database-Friendly GUIDs: `Guid.CreateVersion7()` <span class="badge net9">.NET 9</span>
+## Timestamp-Ordered GUIDs in One Method Call
+
+```csharp
+// Standard v4 GUID (completely random bits — causes B-Tree index page splits if used as clustered key):
+Guid randomV4 = Guid.NewGuid();          // e.g. f47ac10b-58cc-4372-a567-0e02b2c3d479
+
+// [.NET 9] Version 7 GUID (first 48 bits are a Unix millisecond timestamp — sorts chronologically):
+Guid sequentialV7 = Guid.CreateVersion7(); // e.g. 0192f7b4-8c10-7a32-9b11-4d3e2f1a0b9c
+Guid nextV7       = Guid.CreateVersion7(); // e.g. 0192f7b4-8c11-7401-8c22-9a8b7c6d5e4f
+```
+
+- **When to Use It:** Whenever C# code generates a `Guid` primary key or correlation ID that gets indexed in a database table—`Guid.CreateVersion7()` inserts sequentially at the end of the index instead of fragmenting random pages.
+
+<!--
+SPEAKER NOTES:
+- Keep this brief: if you ever generate GUIDs in C# that are stored in an indexed database column, use `Guid.CreateVersion7()` instead of `Guid.NewGuid()` so rows sort in creation order.
+-->
+
+---
+
+<!-- ===================================================================== -->
+<!-- SLIDE 22: MODULE 4 DIVIDER                                            -->
+<!-- ===================================================================== -->
+
+# Module 4: ASP.NET Core & Minimal APIs (.NET 8 – 11)
+## Model Validation, TypedResults, OpenAPI 3.2 & Startup Options
+
+- **Shared Model Validation (`.NET 10 & 11`):** Why validation belongs on the model + `.NET 11` `IAsyncValidatableObject`
+- **`TypedResults` & Union Endpoints:** Strongly-typed multi-status responses for exact OpenAPI schemas
+- **Built-in OpenAPI 3.1 / 3.2 (`.NET 9–11`):** Dropping Swashbuckle and pairing with Scalar UI
+- **Options Pattern Startup Validation (`.NET 8–10`):** `ValidateOnStart()` and `[ValidateEnumeratedItems]`
+
+<!--
+SPEAKER NOTES:
+- Module 4 covers ASP.NET Core Minimal APIs.
+- At the end of this module we will run the `MinimalApiDemo` Visual Studio project and execute requests against it using `requests.http`.
+-->
+
+---
+
+<!-- ===================================================================== -->
+<!-- SLIDE 23: MODEL VALIDATION & IASYNCVALIDATABLEOBJECT                  -->
+<!-- ===================================================================== -->
+
+# Model-Level Validation & `IAsyncValidatableObject` <span class="badge net10">.NET 10</span> <span class="badge net11">.NET 11</span>
+## Reusing Validation Across Insert, Update & Code Assignments
+
+- **Why Validate on the Model Instead of the Endpoint?**
+  - Defining rules on the model (`[Required]`, `[Range]`, `IAsyncValidatableObject`) means the exact same validation runs for **Insert (`POST`)**, **Update (`PUT`)**, and when constructing or testing models in code.
+
+```csharp
+// [.NET 10] Source-generated Minimal API validation + [.NET 11] IAsyncValidatableObject
 public class OrderUpsertModel : IAsyncValidatableObject
 {
     [Required, Range(1, int.MaxValue)]
@@ -685,157 +1001,244 @@ public class OrderUpsertModel : IAsyncValidatableObject
     [Required, MinLength(2)]
     public string Sku { get; set; } = string.Empty;
 
-    // [.NET 11] Asynchronous validation: checks DB existence without blocking threads!
+    [Range(1, 1000)]
+    public int Quantity { get; set; }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext context) => [];
+
+    // [.NET 11] Asynchronous validation for DB/service checks without blocking threads:
     public async IAsyncEnumerable<ValidationResult> ValidateAsync(
-        ValidationContext context, 
-        [EnumeratorCancellation] CancellationToken ct = default)
+        ValidationContext context, [EnumeratorCancellation] CancellationToken ct = default)
     {
-        await Task.Delay(10, ct); // Simulated async DB check: SELECT 1 FROM Customers...
-        if (CustomerId == 404)
-            yield return new ValidationResult($"Customer {CustomerId} does not exist.", [nameof(CustomerId)]);
+        await Task.Delay(10, ct); // e.g., check if CustomerId or Sku is active in DB
+        if (Sku.StartsWith("DISCONTINUED-", StringComparison.OrdinalIgnoreCase))
+            yield return new ValidationResult($"SKU '{Sku}' is discontinued.", [nameof(Sku)]);
     }
 }
 ```
 
 <!--
 SPEAKER NOTES:
-- Highlight the design benefit: putting validation rules on the model means you write the validation once.
-- Both POST /api/orders and PUT /api/orders/{id} reuse the exact same validation rules without duplicating logic.
-- .NET 11 `IAsyncValidatableObject` allows async database checks without thread-pool starvation.
+- Highlight the architectural point first: if you write `if (req.Quantity <= 0)` inside your `MapPost` lambda, someone will inevitably forget to copy that check into `MapPut` or a background job.
+- Putting data annotations and `IAsyncValidatableObject` on `OrderUpsertModel` keeps the invariant in one place for both inserts and updates.
+- In .NET 10, Minimal APIs gained built-in `AddValidation()` (using a compile-time source generator via `[ValidatableType]`), and .NET 11 adds `IAsyncValidatableObject` so custom validation can `await` database checks cleanly.
 -->
 
 ---
 
 <!-- ===================================================================== -->
-<!-- SLIDE 17: MINIMAL APIS - TYPEDRESULTS & OPENAPI                       -->
+<!-- SLIDE 24: TYPEDRESULTS & BUILT-IN OPENAPI 3.2                         -->
 <!-- ===================================================================== -->
 
-# Minimal APIs: TypedResults & OpenAPI 3.2 <span class="badge net9">.NET 9</span> <span class="badge net11">.NET 11</span>
-## Strongly-Typed Status Responses & Scalar UI
+# `TypedResults` & Built-in OpenAPI 3.2 <span class="badge net9">.NET 9</span> <span class="badge net11">.NET 11</span>
+## Exact Multi-Status Schemas Without Swashbuckle
 
 ```csharp
-app.MapGet("/api/customers/{id:int}/orders", 
-    async Task<Results<Ok<IEnumerable<OrderDto>>, NotFound<string>>> (int id, ...) =>
+// Return signature declares the exact HTTP status codes and payload types:
+app.MapGet("/api/customers/{customerId:int}/orders",
+    async Task<Results<Ok<IEnumerable<OrderDto>>, NotFound<string>>> (
+        int customerId, IDapperOrderRepository repo, CancellationToken ct) =>
 {
-    var orders = await repo.GetOrdersByCustomerIdAsync(id);
-    return orders.Any() 
-        ? TypedResults.Ok(orders) 
-        : TypedResults.NotFound($"Customer {id} has no orders.");
+    var orders = await repo.GetOrdersByCustomerIdAsync(customerId, ct);
+    return orders.Any()
+        ? TypedResults.Ok(orders)
+        : TypedResults.NotFound($"No orders found for customer {customerId}");
 });
 ```
 
-* **Why `TypedResults` Matters:**
-  * Replaces untyped `Results.Ok(...)` with generic type metadata.
-  * Built-in .NET OpenAPI generates exact schemas for `200` and `404` status codes automatically.
-* **Built-in OpenAPI (Dropping Swashbuckle):**
-  * `Microsoft.AspNetCore.OpenApi` natively generates the OpenAPI 3.2 document.
-  * Paired with **Scalar** (`app.MapScalarApiReference()`) for clean API documentation.
+- **`TypedResults` vs `Results`:**
+  - `Results.Ok(...)` returns an untyped `IResult`, hiding the response type from OpenAPI unless you manually add `.Produces<T>(200)`.
+  - `TypedResults.Ok(...)` preserves generic type metadata in the return signature (`Results<Ok<T>, NotFound<string>>`), so OpenAPI automatically documents every status code.
+- **Built-in OpenAPI 3.1 / 3.2 (`Microsoft.AspNetCore.OpenApi`):**
+  - Replaces Swashbuckle natively (`builder.Services.AddOpenApi()` + `app.MapOpenApi()`), and in `.NET 11` adds binary file response schemas (`TypedResults.File`). Pairs with **Scalar** or Swagger UI.
 
-<div class="callout-box">
-<p>💻 <strong>Demo:</strong> <code>demos/MinimalApiDemo/</code> + <code>requests.http</code></p>
+<!--
+SPEAKER NOTES:
+- Show how `Task<Results<Ok<IEnumerable<OrderDto>>, NotFound<string>>>` does two things at once:
+  1. The C# compiler verifies your endpoint only returns those declared status types.
+  2. Built-in OpenAPI reads that return type and populates the `200` and `404` schemas in `/openapi/v1.json` without needing `[ProducesResponseType]` attributes.
+-->
+
+---
+
+<!-- ===================================================================== -->
+<!-- SLIDE 25: OPTIONS PATTERN ENHANCEMENTS                                -->
+<!-- ===================================================================== -->
+
+# Options Pattern: Startup & Deep Validation <span class="badge net8">.NET 8</span> <span class="badge net10">.NET 10</span>
+## Catching Misconfigured `appsettings.json` on Application Startup
+
+```csharp
+// In Program.cs — fails immediately on startup if configuration is invalid:
+builder.Services.AddOptions<OrderProcessingOptions>()
+    .BindConfiguration("OrderProcessing")
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+```
+
+```csharp
+public class OrderProcessingOptions
+{
+    [Range(1, 500)]
+    public int BatchSizeLimit { get; set; } = 100;
+
+    [Required]
+    public string RegionEndpoint { get; set; } = string.Empty;
+
+    // [.NET 8+] Validates nested objects and every item inside a collection:
+    [ValidateObjectMembers]
+    public RetryPolicyOptions RetryPolicy { get; set; } = new();
+
+    [ValidateEnumeratedItems]
+    public List<WebhookChannelOptions> NotificationChannels { get; set; } = [];
+}
+```
+
+<!--
+SPEAKER NOTES:
+- Without `ValidateOnStart()`, a missing or invalid setting in `appsettings.json` isn't noticed until a user hits the specific code path that resolves `IOptions<OrderProcessingOptions>`.
+- Adding `[ValidateObjectMembers]` and `[ValidateEnumeratedItems]` ensures validation also traverses nested objects and lists, and source-generated `[OptionsValidator]` makes it reflection-free.
+-->
+
+---
+
+<!-- ===================================================================== -->
+<!-- SLIDE 26: PIPELINE FEATURES & MINIMAL API DEMO                        -->
+<!-- ===================================================================== -->
+
+# Pipeline Improvements & Live Web API Demo <span class="badge net8">.NET 8</span> <span class="badge net11">.NET 11</span>
+## `[ShortCircuit]`, `IExceptionHandler` & `MinimalApiDemo`
+
+- **`ShortCircuit()` on Probe Routes (`.NET 8+`):**
+  ```csharp
+  // Executes immediately after routing, bypassing authentication, logging, and CORS middleware:
+  app.MapGet("/health", () => Results.Ok(new { status = "Healthy" })).ShortCircuit();
+  ```
+- **`IExceptionHandler` (`.NET 8+`):** Clean, DI-friendly interface for centralized exception-to-`ProblemDetails` handling, replacing custom `try/catch` middleware classes.
+
+<div class="demo-bar">
+💻 <strong>Live Demo (Visual Studio / <code>.slnx</code>):</strong> <code>demos/MinimalApiDemo/</code>
+<br/>• Inspect <code>MinimalApiDemo.slnx</code> &amp; <code>Program.cs</code> (Options <code>ValidateOnStart</code>, <code>HybridCache</code>, <code>IAsyncValidatableObject</code> on <code>POST</code> &amp; <code>PUT</code>, <code>TypedResults</code>)
+<br/>• Run API &amp; open Scalar UI (<code>/scalar/v1</code>) + fire requests from <code>requests.http</code>
 </div>
 
 <!--
 SPEAKER NOTES:
-- TypedResults makes endpoints self-documenting.
-- No need to maintain manual [ProducesResponseType] attributes.
-- Swashbuckle was abandoned; Microsoft now maintains official OpenAPI tooling.
+- Point out `.ShortCircuit()` for health checks and static probes so they don't run through auth/logging middleware.
 - [SWITCH TO DEMO]:
-  Run: `dotnet run --project dotnet-11-presentation/demos/MinimalApiDemo/MinimalApiDemo.csproj --urls http://localhost:5248`
-  Open `http://localhost:5248/scalar/v1` and execute requests from `requests.http`.
+  1. Open `demos/MinimalApiDemo/MinimalApiDemo.slnx` (or `Program.cs` and `requests.http`).
+  2. Start the server: `dotnet run --project dotnet-11-presentation/demos/MinimalApiDemo/MinimalApiDemo.csproj --urls http://localhost:5248`.
+  3. Open `requests.http` and fire:
+     - `GET /health`
+     - `GET /api/customers/1/orders` (cached via `HybridCache`)
+     - `POST /api/orders` and `PUT /api/orders/101` (sharing `OrderUpsertModel` validation)
+     - `POST /api/orders` with `DISCONTINUED-PART` to see `.NET 11` `IAsyncValidatableObject` return a 400 `ValidationProblem`.
+  4. Show `/scalar/v1` and `/openapi/v1.json` in the browser.
 -->
 
 ---
 
 <!-- ===================================================================== -->
-<!-- SLIDE 18: RUNTIME ASYNC                                               -->
+<!-- SLIDE 27: MODULE 5 DIVIDER                                            -->
 <!-- ===================================================================== -->
 
-# Runtime Async <span class="badge net11">.NET 11 Architecture</span>
-## How CoreCLR Natively Manages `async` Methods
+# Module 5: Under-the-Hood Runtime Improvements
+## What We Get Automatically When Upgrading the Runtime
+
+- **Runtime Async (`.NET 11`):** CoreCLR natively understands `async` methods—cleaner stack traces and lower `await` overhead on every `connection.QueryAsync()`
+- **Read-Heavy Lookup Caches (`.NET 8–9`):** `FrozenDictionary<TKey, TValue>` and `SearchValues<T>`
+
+<!--
+SPEAKER NOTES:
+- Module 5 is a quick look under the hood at what changes in the runtime itself when we target .NET 11.
+-->
+
+---
+
+<!-- ===================================================================== -->
+<!-- SLIDE 28: RUNTIME ASYNC                                               -->
+<!-- ===================================================================== -->
+
+# Runtime Async <span class="badge net11">.NET 11 Runtime</span>
+## Native CoreCLR Async Execution (Replacing Compiler State Machines)
 
 <div class="grid-2">
 <div class="box-before">
 <h4>Before .NET 11 (Compiler State Machine)</h4>
 
-* The Roslyn compiler rewrote `async` methods into a hidden `struct` or `class` implementing `IAsyncStateMachine`.
-* Local variables were hoisted into fields.
-* Convoluted stack traces during debugging:
-  `at OrderService.<GetOrdersAsync>d__1.MoveNext()`
+- Since C# 5 (2012), the Roslyn compiler rewrote every `async` method into a generated `IAsyncStateMachine` struct (`<GetOrdersAsync>d__4`).
+- Whenever a Dapper `await connection.QueryAsync(...)` suspended for I/O, the state machine had to be boxed onto the heap.
+- Produced noisy stack traces filled with `.MoveNext()` frames.
 </div>
 
 <div class="box-after">
-<h4>.NET 11 (Native CoreCLR Async)</h4>
+<h4>.NET 11 (CoreCLR Runtime Async)</h4>
 
-* The **runtime itself natively manages execution suspension and resumption**.
-* Eliminates the compiler-generated state machine dispatch overhead.
-* **Fewer allocations** on every `await connection.QueryAsync()` call.
-* **Clean stack traces:** Points directly to your actual method and line number in error logs!
+- The **CoreCLR runtime and JIT natively manage `async` method suspension and resumption**.
+- Eliminates compiler-generated state machine dispatch overhead.
+- **Fewer allocations** across async-heavy Dapper repository and Minimal API pipelines.
+- **Cleaner stack traces:** Exception logs point directly to your method signatures without `<Method>d__4.MoveNext()` noise.
 </div>
 </div>
 
 <!--
 SPEAKER NOTES:
-- Since C# 5 (2012), async was a compiler transformation. The compiler created a state machine class with MoveNext().
-- In .NET 11, CoreCLR natively suspends and resumes managed frames.
-- This means fewer allocations on high-frequency Dapper calls, and clean stack traces in Datadog or Application Insights without cryptic `<Method>d__1.MoveNext()` lines.
+- Explain why this matters to every developer on the team even if we don't have extreme throughput requirements:
+  1. Stack traces in logs and the Visual Studio debugger are much cleaner because the compiler state machine (`<Method>d__MoveNext`) is gone.
+  2. Every `await connection.QueryAsync()` in Dapper and every async Minimal API handler runs with less state-machine boxing overhead automatically—with zero code changes required.
 -->
 
 ---
 
 <!-- ===================================================================== -->
-<!-- SLIDE 19: SUMMARY & PRACTICAL TAKEAWAYS                               -->
+<!-- SLIDE 29: FROZENDICTIONARY & SEARCHVALUES                             -->
 <!-- ===================================================================== -->
 
-# Practical Takeaways
-## Features We Can Start Using
+# Read-Only Lookup Caches: `FrozenDictionary` <span class="badge net8">.NET 8</span> <span class="badge net9">.NET 9</span>
+## Fast, Immutable In-Memory Reference Tables
 
-* **Everyday Boilerplate Reductions:**
-  * Use **collection expressions `[.. list]`** to clean up collection initialization.
-  * Use the **`field` keyword** in C# 14 for simple sanitization/trimming without backing fields.
-* **Working with Data After Dapper:**
-  * Use **`CountBy`** and **`AggregateBy`** instead of heavy `.GroupBy()` calls.
-  * Use **`LeftJoin`** when combining two in-memory stored procedure rowsets.
-  * Consider **`HybridCache`** for hot queries to eliminate cache stampedes against the database.
-* **API & Frontend Automation:**
-  * Put validation on models so rules are shared between `POST` and `PUT`.
-  * Return **`TypedResults`** so OpenAPI generates accurate schemas.
-  * Use OpenAPI code generators in React/Vite to stop manually writing TypeScript DTOs.
-* **Moving Forward with .NET 11:**
-  * C# 15 Unions provide clean domain state machines and explicit result types without exceptions.
+```csharp
+using System.Collections.Frozen;
 
-<!--
-SPEAKER NOTES:
-- Summarize the main takeaways.
-- Emphasize that many of these features can be adopted right now in existing code to make it cleaner and more readable.
--->
-
----
-
-<!-- ===================================================================== -->
-<!-- SLIDE 20: QUESTIONS & DEMO PLAYGROUND                                 -->
-<!-- ===================================================================== -->
-
-# Questions & Discussion
-
-### Running the Demos Locally:
-```bash
-# 1. C# Single-File Scripts:
-dotnet run dotnet-11-presentation/demos/csharp-scripts/01_Unions_Basics.cs -p:LangVersion=preview
-dotnet run dotnet-11-presentation/demos/csharp-scripts/02_Unions_Results.cs -p:LangVersion=preview
-dotnet run dotnet-11-presentation/demos/csharp-scripts/03_Field_Keyword.cs -p:LangVersion=preview
-dotnet run dotnet-11-presentation/demos/csharp-scripts/04_Collection_Expressions.cs -p:LangVersion=preview
-dotnet run dotnet-11-presentation/demos/csharp-scripts/05_Linq_Aggregations.cs -p:LangVersion=preview
-dotnet run dotnet-11-presentation/demos/csharp-scripts/06_Linq_LeftJoin.cs -p:LangVersion=preview
-
-# 2. Minimal API Project:
-dotnet run --project dotnet-11-presentation/demos/MinimalApiDemo/MinimalApiDemo.csproj --urls http://localhost:5248
+// Ideal for lookup tables loaded once at startup and read on every request:
+private static readonly FrozenDictionary<string, int> StatusPriorityMap =
+    new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
+    {
+        ["Pending"]   = 1,
+        ["Processing"] = 2,
+        ["Shipped"]   = 3,
+        ["Completed"] = 4
+    }.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
 ```
 
-* Presentation Guide & Study Notes: [`PRESENTER_GUIDE.md`](file:///C:/dev/antigravity/whatsnewdotnet11/dotnet-11-presentation/PRESENTER_GUIDE.md)
+- **`FrozenDictionary<TKey, TValue>` (`.NET 8+`):**
+  - Takes slightly longer to construct once at startup in exchange for **significantly faster `.TryGetValue()` lookups** and guaranteed immutability.
+- **`SearchValues<T>` (`.NET 8 & 9`):**
+  - Precomputes vectorized character or substring search tables (`SearchValues.Create(["ADMIN-", "SYS-"], StringComparison.OrdinalIgnoreCase)`) for fast validation checks.
 
 <!--
 SPEAKER NOTES:
-- Open the floor for team questions.
-- Thank everyone for attending.
+- Whenever we have a static `Dictionary<TKey, TValue>` or lookup map initialized once at startup and read many times, `.ToFrozenDictionary()` is a drop-in replacement that is both immutable and faster for reads.
+-->
+
+---
+
+<!-- ===================================================================== -->
+<!-- SLIDE 30: FEATURE CHEAT SHEET BY VERSION & Q&A                        -->
+<!-- ===================================================================== -->
+
+# Feature Reference by .NET Version & Q&A
+## What We Can Use in Existing Projects vs. .NET 11
+
+| Version | Language & Tooling | Libraries, Data & Minimal APIs |
+| :--- | :--- | :--- |
+| **.NET 8** `(C# 12)` | Collection expressions `[.. list]` | `ValidateOnStart()`, `[ValidateEnumeratedItems]`, `[ShortCircuit]`, `FrozenDictionary` |
+| **.NET 9** `(C# 13)` | `.slnx` XML solution files | LINQ `CountBy`, `AggregateBy`, `Index()`, `HybridCache`, Built-in OpenAPI, `Guid.CreateVersion7()` |
+| **.NET 10** `(C# 14)` | `dotnet run file.cs`, `field` keyword, `?.=`, `extension(T)` | LINQ `LeftJoin` & `RightJoin`, Minimal API `AddValidation()` (`[ValidatableType]`) |
+| **.NET 11** `(C# 15)` | **C# 15 Union Types** (`union` & exhaustive `switch`), **2-Year STS (Nov 2028 EOL)** | **CoreCLR Runtime Async**, **`IAsyncValidatableObject`**, LINQ `FullJoin`, OpenAPI 3.2 binary schemas |
+
+<!--
+SPEAKER NOTES:
+- Use this table as a wrap-up reference during Q&A.
+- Point out that features in the .NET 8, 9, and 10 rows can already be used in our .NET 8 / 10 codebases today, while upgrading to .NET 11 unlocks C# 15 Unions, `IAsyncValidatableObject`, and Runtime Async with the same November 2028 support window as .NET 10.
 -->
