@@ -1,0 +1,63 @@
+### Variables
+@host = http://localhost:5248
+
+### 1. Fast Health Check
+GET {{host}}/health
+Accept: application/json
+
+### 2. Built-in OpenAPI 3.2 Document
+GET {{host}}/openapi/v1.json
+Accept: application/json
+
+### 3. Get Orders for Customer 1 (Cached via HybridCache)
+# 1st call queries DB, 2nd call returns immediately from HybridCache
+GET {{host}}/api/customers/1/orders
+Accept: application/json
+
+### 4. Create Order (POST) - Valid Model
+POST {{host}}/api/orders
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "sku": "WIDGET-PRO-11",
+  "quantity": 3,
+  "unitPrice": 49.99
+}
+
+### 5. Update Order (PUT) - Reusing the EXACT SAME Validation Model
+PUT {{host}}/api/orders/101
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "sku": "WIDGET-PRO-11",
+  "quantity": 10,
+  "unitPrice": 45.00
+}
+
+### 6. Validation Failure: Customer does not exist in DB (Async check)
+POST {{host}}/api/orders
+Content-Type: application/json
+
+{
+  "customerId": 404,
+  "sku": "WIDGET-PRO-11",
+  "quantity": 2,
+  "unitPrice": 25.00
+}
+
+### 7. Validation Failure: Discontinued SKU
+POST {{host}}/api/orders
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "sku": "DISCONTINUED-PART",
+  "quantity": 1,
+  "unitPrice": 10.00
+}
+
+### 8. Interactive Scalar UI Documentation
+# Open in browser:
+# http://localhost:5248/scalar/v1

@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="requests.http" />
+  </Folder>
+  <Project Path="MinimalApiDemo.csproj" />
+</Solution>
