@@ -164,12 +164,12 @@ dotnet run --project dotnet-11-presentation/demos/MinimalApiDemo/MinimalApiDemo.
 ---
 
 ### 3.7 Bonus: OpenAPI 3.2 Contract Generation for React/Vite & .NET Clients
-- **Eliminating Manual DTO Drift:** When Minimal APIs use `TypedResults<Ok<OrderDto>, NotFound, ValidationProblem>`, ASP.NET Core emits exact request/response schemas and status codes in `/openapi/v1.json`.
+- **Eliminating Manual DTOs and Hardcoded URLs:** When Minimal APIs use `TypedResults<Ok<OrderDto>, NotFound, ValidationProblem>` and `.WithName("GetCustomerOrders")`, ASP.NET Core emits exact request/response schemas, URL paths, and `operationId` names in `/openapi/v1.json`.
 - **React / Vite Workflow:**
-  - `npx openapi-typescript http://localhost:5248/openapi/v1.json -o src/api/schema.d.ts` generates zero-runtime-overhead TypeScript interfaces.
-  - Paired with `openapi-fetch`, renaming a property on a C# DTO immediately causes `npm run build` (`tsc`) to fail on the frontend.
+  - While `openapi-typescript` only generates a `.d.ts` type dictionary keyed by URL path, full generators like **Hey API (`@hey-api/openapi-ts`)** or **Orval (`orval`)** read both the URL paths and `operationId` from `/openapi/v1.json` and generate **named TypeScript SDK functions** (`await getCustomerOrders({ path: { customerId: 1 } })`) or **React Query hooks** (`useGetCustomerOrders(customerId)`).
+  - You never write raw `"/api/customers/..."` path strings or duplicate `interface OrderDto` in React, and renaming a C# DTO property immediately fails `npm run build` (`tsc`).
 - **.NET Service-to-Service Workflow:**
-  - `dotnet tool run kiota generate -l CSharp ...` or `nswag openapi2csclient` generates strongly-typed C# HTTP clients from the same `/openapi/v1.json` spec.
+  - `<OpenApiReference>` (NSwag), Kiota, or Refit generates strongly-typed C# HTTP clients (`await ordersClient.GetCustomerOrdersAsync(1, ct)`) from the exact same `/openapi/v1.json` spec.
 
 ---
 

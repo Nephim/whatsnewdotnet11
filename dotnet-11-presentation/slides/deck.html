@@ -5401,26 +5401,24 @@ th {
 ;" data-marpit-pagination-total="30">
 <header>What's New in .NET 11 | Modern .NET &amp; C# (8 – 11)</header>
 
-<h1 id="bonus-generating-react--vite-models-from-openapi">Bonus: Generating React / Vite Models from OpenAPI</h1>
-<h2 id="eliminating-hand-written-typescript-dtos">Eliminating Hand-Written TypeScript DTOs</h2>
-<p>Instead of manually maintaining duplicate TypeScript interfaces in our React/Vite repo whenever a C# DTO changes, generate them directly from the Minimal API's OpenAPI spec:</p>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-bash"><span class="hljs-comment"># 1. Generate TypeScript types from the .NET OpenAPI spec (openapi-typescript):</span>
-npx openapi-typescript http://localhost:5248/openapi/v1.json -o src/api/schema.d.ts
+<h1 id="bonus-generating-react--vite-clients-from-openapi">Bonus: Generating React / Vite Clients from OpenAPI</h1>
+<h2 id="named-functions--typescript-models-directly-from-openapiv1json">Named Functions &amp; TypeScript Models Directly from <code>/openapi/v1.json</code></h2>
+<p>The OpenAPI spec includes <strong>both</strong> the DTO schemas and the endpoint URL paths + <code>operationId</code> (from <code>.WithName(&quot;GetCustomerOrders&quot;)</code> in Minimal APIs). Tools like <strong>Orval</strong> or <strong>Hey API (<code>@hey-api/openapi-ts</code>)</strong> generate named functions and React hooks so you never write URL paths by hand:</p>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-bash"><span class="hljs-comment"># Generate typed client functions &amp; DTO models from the .NET OpenAPI spec:</span>
+npx @hey-api/openapi-ts -i http://localhost:5248/openapi/v1.json -o src/api
 </code></pre>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-typescript"><span class="hljs-comment">// 2. Use with a lightweight typed wrapper (openapi-fetch) in React / Vite:</span>
-<span class="hljs-keyword">import</span> createClient <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;openapi-fetch&quot;</span>;
-<span class="hljs-keyword">import</span> <span class="hljs-keyword">type</span> { paths } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./api/schema&quot;</span>;
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-typescript"><span class="hljs-comment">// Generated from .WithName(&quot;GetCustomerOrders&quot;) — URL path and types are baked in:</span>
+<span class="hljs-keyword">import</span> { getCustomerOrders, createOrder, <span class="hljs-keyword">type</span> <span class="hljs-title class_">OrderDto</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;./api&quot;</span>;
 
-<span class="hljs-keyword">const</span> api = createClient&lt;paths&gt;({ <span class="hljs-attr">baseUrl</span>: <span class="hljs-string">&quot;http://localhost:5248&quot;</span> });
+<span class="hljs-comment">// 1. Call the generated function directly (no raw &quot;/api/...&quot; path strings!):</span>
+<span class="hljs-keyword">const</span> { <span class="hljs-attr">data</span>: orders } = <span class="hljs-keyword">await</span> <span class="hljs-title function_">getCustomerOrders</span>({ <span class="hljs-attr">path</span>: { <span class="hljs-attr">customerId</span>: <span class="hljs-number">1</span> } });
 
-<span class="hljs-comment">// Path parameters, request body, and return models are 100% inferred from .NET:</span>
-<span class="hljs-keyword">const</span> { data, error } = <span class="hljs-keyword">await</span> api.<span class="hljs-title function_">GET</span>(<span class="hljs-string">&quot;/api/customers/{customerId}/orders&quot;</span>, {
-  <span class="hljs-attr">params</span>: { <span class="hljs-attr">path</span>: { <span class="hljs-attr">customerId</span>: <span class="hljs-number">1</span> } }
-});
-<span class="hljs-comment">// &#x27;data&#x27; is automatically typed as OrderDto[] | undefined!</span>
+<span class="hljs-comment">// 2. Or with Orval + React Query, generate ready-to-use hooks:</span>
+<span class="hljs-keyword">const</span> { <span class="hljs-attr">data</span>: orders, isLoading } = <span class="hljs-title function_">useGetCustomerOrders</span>(customerId);
+<span class="hljs-comment">// &#x27;orders&#x27; is automatically typed as OrderDto[]!</span>
 </code></pre>
 <ul>
-<li><strong>Why This Matters:</strong> If a backend developer renames a property on <code>OrderDto</code> in C#, running <code>npm run build</code> in Vite immediately flags the exact React component line with a TypeScript compile error.</li>
+<li><strong>Why This Matters:</strong> Both URL routes and DTO properties come straight from .NET. If a C# property or endpoint signature changes, <code>npm run build</code> in Vite immediately fails with a TypeScript compile error.</li>
 </ul>
 <footer>ASP.NET Core Minimal APIs • Dapper • React / Vite</footer>
 </section>
@@ -6230,12 +6228,12 @@ th {
 <header>What's New in .NET 11 | Modern .NET &amp; C# (8 – 11)</header>
 
 <h1 id="module-4-aspnet-core--minimal-apis-net-8-%E2%80%93-11">Module 4: ASP.NET Core &amp; Minimal APIs (.NET 8 – 11)</h1>
-<h2 id="model-validation-typedresults-openapi-32--startup-options">Model Validation, TypedResults, OpenAPI 3.2 &amp; Startup Options</h2>
+<h2 id="startup-options-model-validation-typedresults--openapi-32">Startup Options, Model Validation, TypedResults &amp; OpenAPI 3.2</h2>
 <ul>
+<li><strong>Options Pattern Startup Validation (<code>.NET 8–10</code>):</strong> <code>ValidateOnStart()</code> and <code>[ValidateEnumeratedItems]</code></li>
 <li><strong>Shared Model Validation (<code>.NET 10 &amp; 11</code>):</strong> Why validation belongs on the model + <code>.NET 11</code> <code>IAsyncValidatableObject</code></li>
 <li><strong><code>TypedResults</code> &amp; Union Endpoints:</strong> Strongly-typed multi-status responses for exact OpenAPI schemas</li>
 <li><strong>Built-in OpenAPI 3.1 / 3.2 (<code>.NET 9–11</code>):</strong> Dropping Swashbuckle and pairing with Scalar UI</li>
-<li><strong>Options Pattern Startup Validation (<code>.NET 8–10</code>):</strong> <code>ValidateOnStart()</code> and <code>[ValidateEnumeratedItems]</code></li>
 </ul>
 <footer>ASP.NET Core Minimal APIs • Dapper • React / Vite</footer>
 </section>
@@ -6496,37 +6494,28 @@ th {
 ;" data-marpit-pagination-total="30">
 <header>What's New in .NET 11 | Modern .NET &amp; C# (8 – 11)</header>
 
-<h1 id="model-level-validation--iasyncvalidatableobject-span-classbadge-net10net-10span-span-classbadge-net11net-11span">Model-Level Validation &amp; <code>IAsyncValidatableObject</code> <span class="badge net10">.NET 10</span> <span class="badge net11">.NET 11</span></h1>
-<h2 id="reusing-validation-across-insert-update--code-assignments">Reusing Validation Across Insert, Update &amp; Code Assignments</h2>
-<ul>
-<li><strong>Why Validate on the Model Instead of the Endpoint?</strong>
-<ul>
-<li>Defining rules on the model (<code>[Required]</code>, <code>[Range]</code>, <code>IAsyncValidatableObject</code>) means the exact same validation runs for <strong>Insert (<code>POST</code>)</strong>, <strong>Update (<code>PUT</code>)</strong>, and when constructing or testing models in code.</li>
-</ul>
-</li>
-</ul>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-csharp"><span class="hljs-comment">// [.NET 10] Source-generated Minimal API validation + [.NET 11] IAsyncValidatableObject</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">OrderUpsertModel</span> : <span class="hljs-title">IAsyncValidatableObject</span>
+<h1 id="options-pattern-startup--deep-validation-span-classbadge-net8net-8span-span-classbadge-net10net-10span">Options Pattern: Startup &amp; Deep Validation <span class="badge net8">.NET 8</span> <span class="badge net10">.NET 10</span></h1>
+<h2 id="catching-misconfigured-appsettingsjson-on-application-startup">Catching Misconfigured <code>appsettings.json</code> on Application Startup</h2>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-csharp"><span class="hljs-comment">// In Program.cs — fails immediately on startup if configuration is invalid:</span>
+builder.Services.AddOptions&lt;OrderProcessingOptions&gt;()
+    .BindConfiguration(<span class="hljs-string">&quot;OrderProcessing&quot;</span>)
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+</code></pre>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">OrderProcessingOptions</span>
 {
-    [<span class="hljs-meta">Required, Range(1, int.MaxValue)</span>]
-    <span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> CustomerId { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    [<span class="hljs-meta">Range(1, 500)</span>]
+    <span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> BatchSizeLimit { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; } = <span class="hljs-number">100</span>;
 
-    [<span class="hljs-meta">Required, MinLength(2)</span>]
-    <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> Sku { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; } = <span class="hljs-built_in">string</span>.Empty;
+    [<span class="hljs-meta">Required</span>]
+    <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> RegionEndpoint { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; } = <span class="hljs-built_in">string</span>.Empty;
 
-    [<span class="hljs-meta">Range(1, 1000)</span>]
-    <span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> Quantity { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+    <span class="hljs-comment">// [.NET 8+] Validates nested objects and every item inside a collection:</span>
+    [<span class="hljs-meta">ValidateObjectMembers</span>]
+    <span class="hljs-keyword">public</span> RetryPolicyOptions RetryPolicy { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; } = <span class="hljs-keyword">new</span>();
 
-    <span class="hljs-function"><span class="hljs-keyword">public</span> IEnumerable&lt;ValidationResult&gt; <span class="hljs-title">Validate</span>(<span class="hljs-params">ValidationContext context</span>)</span> =&gt; [];
-
-    <span class="hljs-comment">// [.NET 11] Asynchronous validation for DB/service checks without blocking threads:</span>
-    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">async</span> IAsyncEnumerable&lt;ValidationResult&gt; <span class="hljs-title">ValidateAsync</span>(<span class="hljs-params">
-        ValidationContext context, [EnumeratorCancellation] CancellationToken ct = <span class="hljs-literal">default</span></span>)</span>
-    {
-        <span class="hljs-keyword">await</span> Task.Delay(<span class="hljs-number">10</span>, ct); <span class="hljs-comment">// e.g., check if CustomerId or Sku is active in DB</span>
-        <span class="hljs-keyword">if</span> (Sku.StartsWith(<span class="hljs-string">&quot;DISCONTINUED-&quot;</span>, StringComparison.OrdinalIgnoreCase))
-            <span class="hljs-function"><span class="hljs-keyword">yield</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title">ValidationResult</span>(<span class="hljs-params"><span class="hljs-string">$&quot;SKU &#x27;<span class="hljs-subst">{Sku}</span>&#x27; is discontinued.&quot;</span>, [<span class="hljs-keyword">nameof</span>(Sku</span>)])</span>;
-    }
+    [<span class="hljs-meta">ValidateEnumeratedItems</span>]
+    <span class="hljs-keyword">public</span> List&lt;WebhookChannelOptions&gt; NotificationChannels { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; } = [];
 }
 </code></pre>
 <footer>ASP.NET Core Minimal APIs • Dapper • React / Vite</footer>
@@ -6788,32 +6777,39 @@ th {
 ;" data-marpit-pagination-total="30">
 <header>What's New in .NET 11 | Modern .NET &amp; C# (8 – 11)</header>
 
-<h1 id="typedresults--built-in-openapi-32-span-classbadge-net9net-9span-span-classbadge-net11net-11span"><code>TypedResults</code> &amp; Built-in OpenAPI 3.2 <span class="badge net9">.NET 9</span> <span class="badge net11">.NET 11</span></h1>
-<h2 id="exact-multi-status-schemas-without-swashbuckle">Exact Multi-Status Schemas Without Swashbuckle</h2>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-csharp"><span class="hljs-comment">// Return signature declares the exact HTTP status codes and payload types:</span>
-app.MapGet(<span class="hljs-string">&quot;/api/customers/{customerId:int}/orders&quot;</span>,
-    <span class="hljs-function"><span class="hljs-keyword">async</span> <span class="hljs-title">Task</span>&lt;<span class="hljs-title">Results</span>&lt;<span class="hljs-title">Ok</span>&lt;<span class="hljs-title">IEnumerable</span>&lt;<span class="hljs-title">OrderDto</span>&gt;&gt;, <span class="hljs-title">NotFound</span>&lt;<span class="hljs-title">string</span>&gt;&gt;&gt; (<span class="hljs-params">
-        <span class="hljs-built_in">int</span> customerId, IDapperOrderRepository repo, CancellationToken ct</span>)</span> =&gt;
+<h1 id="model-level-validation--iasyncvalidatableobject-span-classbadge-net10net-10span-span-classbadge-net11net-11span">Model-Level Validation &amp; <code>IAsyncValidatableObject</code> <span class="badge net10">.NET 10</span> <span class="badge net11">.NET 11</span></h1>
+<h2 id="reusing-validation-across-insert-update--code-assignments">Reusing Validation Across Insert, Update &amp; Code Assignments</h2>
+<ul>
+<li><strong>Why Validate on the Model Instead of the Endpoint?</strong>
+<ul>
+<li>Defining rules on the model (<code>[Required]</code>, <code>[Range]</code>, <code>IAsyncValidatableObject</code>) means the exact same validation runs for <strong>Insert (<code>POST</code>)</strong>, <strong>Update (<code>PUT</code>)</strong>, and when constructing or testing models in code.</li>
+</ul>
+</li>
+</ul>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-csharp"><span class="hljs-comment">// [.NET 10] Source-generated Minimal API validation + [.NET 11] IAsyncValidatableObject</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">OrderUpsertModel</span> : <span class="hljs-title">IAsyncValidatableObject</span>
 {
-    <span class="hljs-keyword">var</span> orders = <span class="hljs-keyword">await</span> repo.GetOrdersByCustomerIdAsync(customerId, ct);
-    <span class="hljs-keyword">return</span> orders.Any()
-        ? TypedResults.Ok(orders)
-        : TypedResults.NotFound(<span class="hljs-string">$&quot;No orders found for customer <span class="hljs-subst">{customerId}</span>&quot;</span>);
-});
+    [<span class="hljs-meta">Required, Range(1, int.MaxValue)</span>]
+    <span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> CustomerId { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+
+    [<span class="hljs-meta">Required, MinLength(2)</span>]
+    <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> Sku { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; } = <span class="hljs-built_in">string</span>.Empty;
+
+    [<span class="hljs-meta">Range(1, 1000)</span>]
+    <span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> Quantity { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; }
+
+    <span class="hljs-function"><span class="hljs-keyword">public</span> IEnumerable&lt;ValidationResult&gt; <span class="hljs-title">Validate</span>(<span class="hljs-params">ValidationContext context</span>)</span> =&gt; [];
+
+    <span class="hljs-comment">// [.NET 11] Asynchronous validation for DB/service checks without blocking threads:</span>
+    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">async</span> IAsyncEnumerable&lt;ValidationResult&gt; <span class="hljs-title">ValidateAsync</span>(<span class="hljs-params">
+        ValidationContext context, [EnumeratorCancellation] CancellationToken ct = <span class="hljs-literal">default</span></span>)</span>
+    {
+        <span class="hljs-keyword">await</span> Task.Delay(<span class="hljs-number">10</span>, ct); <span class="hljs-comment">// e.g., check if CustomerId or Sku is active in DB</span>
+        <span class="hljs-keyword">if</span> (Sku.StartsWith(<span class="hljs-string">&quot;DISCONTINUED-&quot;</span>, StringComparison.OrdinalIgnoreCase))
+            <span class="hljs-function"><span class="hljs-keyword">yield</span> <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title">ValidationResult</span>(<span class="hljs-params"><span class="hljs-string">$&quot;SKU &#x27;<span class="hljs-subst">{Sku}</span>&#x27; is discontinued.&quot;</span>, [<span class="hljs-keyword">nameof</span>(Sku</span>)])</span>;
+    }
+}
 </code></pre>
-<ul>
-<li><strong><code>TypedResults</code> vs <code>Results</code>:</strong>
-<ul>
-<li><code>Results.Ok(...)</code> returns an untyped <code>IResult</code>, hiding the response type from OpenAPI unless you manually add <code>.Produces&lt;T&gt;(200)</code>.</li>
-<li><code>TypedResults.Ok(...)</code> preserves generic type metadata in the return signature (<code>Results&lt;Ok&lt;T&gt;, NotFound&lt;string&gt;&gt;</code>), so OpenAPI automatically documents every status code.</li>
-</ul>
-</li>
-<li><strong>Built-in OpenAPI 3.1 / 3.2 (<code>Microsoft.AspNetCore.OpenApi</code>):</strong>
-<ul>
-<li>Replaces Swashbuckle natively (<code>builder.Services.AddOpenApi()</code> + <code>app.MapOpenApi()</code>), and in <code>.NET 11</code> adds binary file response schemas (<code>TypedResults.File</code>). Pairs with <strong>Scalar</strong> or Swagger UI.</li>
-</ul>
-</li>
-</ul>
 <footer>ASP.NET Core Minimal APIs • Dapper • React / Vite</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="25" data-paginate="true" data-header="What's New in .NET 11 | Modern .NET &amp; C# (8 – 11)" data-footer="ASP.NET Core Minimal APIs • Dapper • React / Vite" data-theme="default" data-style="section {
@@ -7073,30 +7069,32 @@ th {
 ;" data-marpit-pagination-total="30">
 <header>What's New in .NET 11 | Modern .NET &amp; C# (8 – 11)</header>
 
-<h1 id="options-pattern-startup--deep-validation-span-classbadge-net8net-8span-span-classbadge-net10net-10span">Options Pattern: Startup &amp; Deep Validation <span class="badge net8">.NET 8</span> <span class="badge net10">.NET 10</span></h1>
-<h2 id="catching-misconfigured-appsettingsjson-on-application-startup">Catching Misconfigured <code>appsettings.json</code> on Application Startup</h2>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-csharp"><span class="hljs-comment">// In Program.cs — fails immediately on startup if configuration is invalid:</span>
-builder.Services.AddOptions&lt;OrderProcessingOptions&gt;()
-    .BindConfiguration(<span class="hljs-string">&quot;OrderProcessing&quot;</span>)
-    .ValidateDataAnnotations()
-    .ValidateOnStart();
-</code></pre>
-<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-csharp"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title">OrderProcessingOptions</span>
+<h1 id="typedresults--built-in-openapi-32-span-classbadge-net9net-9span-span-classbadge-net11net-11span"><code>TypedResults</code> &amp; Built-in OpenAPI 3.2 <span class="badge net9">.NET 9</span> <span class="badge net11">.NET 11</span></h1>
+<h2 id="exact-multi-status-schemas-without-swashbuckle">Exact Multi-Status Schemas Without Swashbuckle</h2>
+<pre is="marp-pre" data-auto-scaling="downscale-only"><code class="language-csharp"><span class="hljs-comment">// Return signature declares the exact HTTP status codes and payload types:</span>
+app.MapGet(<span class="hljs-string">&quot;/api/customers/{customerId:int}/orders&quot;</span>,
+    <span class="hljs-function"><span class="hljs-keyword">async</span> <span class="hljs-title">Task</span>&lt;<span class="hljs-title">Results</span>&lt;<span class="hljs-title">Ok</span>&lt;<span class="hljs-title">IEnumerable</span>&lt;<span class="hljs-title">OrderDto</span>&gt;&gt;, <span class="hljs-title">NotFound</span>&lt;<span class="hljs-title">string</span>&gt;&gt;&gt; (<span class="hljs-params">
+        <span class="hljs-built_in">int</span> customerId, IDapperOrderRepository repo, CancellationToken ct</span>)</span> =&gt;
 {
-    [<span class="hljs-meta">Range(1, 500)</span>]
-    <span class="hljs-keyword">public</span> <span class="hljs-built_in">int</span> BatchSizeLimit { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; } = <span class="hljs-number">100</span>;
-
-    [<span class="hljs-meta">Required</span>]
-    <span class="hljs-keyword">public</span> <span class="hljs-built_in">string</span> RegionEndpoint { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; } = <span class="hljs-built_in">string</span>.Empty;
-
-    <span class="hljs-comment">// [.NET 8+] Validates nested objects and every item inside a collection:</span>
-    [<span class="hljs-meta">ValidateObjectMembers</span>]
-    <span class="hljs-keyword">public</span> RetryPolicyOptions RetryPolicy { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; } = <span class="hljs-keyword">new</span>();
-
-    [<span class="hljs-meta">ValidateEnumeratedItems</span>]
-    <span class="hljs-keyword">public</span> List&lt;WebhookChannelOptions&gt; NotificationChannels { <span class="hljs-keyword">get</span>; <span class="hljs-keyword">set</span>; } = [];
-}
+    <span class="hljs-keyword">var</span> orders = <span class="hljs-keyword">await</span> repo.GetOrdersByCustomerIdAsync(customerId, ct);
+    <span class="hljs-keyword">return</span> orders.Any()
+        ? TypedResults.Ok(orders)
+        : TypedResults.NotFound(<span class="hljs-string">$&quot;No orders found for customer <span class="hljs-subst">{customerId}</span>&quot;</span>);
+});
 </code></pre>
+<ul>
+<li><strong><code>TypedResults</code> vs <code>Results</code>:</strong>
+<ul>
+<li><code>Results.Ok(...)</code> returns an untyped <code>IResult</code>, hiding the response type from OpenAPI unless you manually add <code>.Produces&lt;T&gt;(200)</code>.</li>
+<li><code>TypedResults.Ok(...)</code> preserves generic type metadata in the return signature (<code>Results&lt;Ok&lt;T&gt;, NotFound&lt;string&gt;&gt;</code>), so OpenAPI automatically documents every status code.</li>
+</ul>
+</li>
+<li><strong>Built-in OpenAPI 3.1 / 3.2 (<code>Microsoft.AspNetCore.OpenApi</code>):</strong>
+<ul>
+<li>Replaces Swashbuckle natively (<code>builder.Services.AddOpenApi()</code> + <code>app.MapOpenApi()</code>), and in <code>.NET 11</code> adds binary file response schemas (<code>TypedResults.File</code>). Pairs with <strong>Scalar</strong> or Swagger UI.</li>
+</ul>
+</li>
+</ul>
 <footer>ASP.NET Core Minimal APIs • Dapper • React / Vite</footer>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="26" data-paginate="true" data-header="What's New in .NET 11 | Modern .NET &amp; C# (8 – 11)" data-footer="ASP.NET Core Minimal APIs • Dapper • React / Vite" data-theme="default" data-style="section {
@@ -8547,22 +8545,23 @@ th {
 - Explain specifically what JSON source generation does: instead of inspecting properties via reflection at runtime, Roslyn generates the C# serialization code during build.
 - Also highlight `RespectNullableAnnotations` (.NET 9+): previously, even if a C# record had `string Sku` (non-nullable), `System.Text.Json` happily deserialized `{&quot;sku&quot;: null}` into `null`. Enabling `RespectNullableAnnotations` enforces non-nullable properties during deserialization.
 - On union/polymorphic JSON: useful for nested polymorphic fields inside a DTO, whereas for endpoint responses we should return consistent DTO shapes per HTTP status code rather than varying 200 OK shapes.</p></div><div class="bespoke-marp-note" data-index="18" tabindex="0"><p>=====================================================================</p><p>SLIDE 19: BONUS - OPENAPI TO REACT / VITE CODEGEN</p><p>=====================================================================</p><p>SPEAKER NOTES:
-- This is a high-leverage workflow improvement for our stack.
-- Because Minimal APIs with `TypedResults` generate an accurate `openapi/v1.json` document automatically, the React/Vite frontend can generate `schema.d.ts` from it (or use `orval` if we want generated TanStack Query hooks).
-- We never have to manually write `interface OrderDto` in TypeScript again, and return types match what the backend actually sends.</p></div><div class="bespoke-marp-note" data-index="19" tabindex="0"><p>=====================================================================</p><p>SLIDE 20: BONUS - OPENAPI TO .NET CLIENT CODEGEN</p><p>=====================================================================</p><p>SPEAKER NOTES:
+- Why did `openapi-typescript` require passing the URL string? Because `openapi-typescript` only generates a `.d.ts` type dictionary keyed by URL path.
+- If you use a full client generator like `@hey-api/openapi-ts`, `orval`, or `nswag`, it reads the URL path AND the `operationId` (set via `.WithName(&quot;GetCustomerOrders&quot;)` on the Minimal API endpoint) from `/openapi/v1.json` and generates actual named TypeScript functions (`getCustomerOrders`, `createOrder`) or React Query hooks (`useGetCustomerOrders`).
+- That way, React components never hardcode URL paths or manually define `interface OrderDto`.</p></div><div class="bespoke-marp-note" data-index="19" tabindex="0"><p>=====================================================================</p><p>SLIDE 20: BONUS - OPENAPI TO .NET CLIENT CODEGEN</p><p>=====================================================================</p><p>SPEAKER NOTES:
 - Just like on the React side, if one .NET service calls another API, we don't need to hand-write `HttpClient.GetFromJsonAsync&lt;OrderDto&gt;(&quot;/api/...&quot;)` and duplicate the DTO classes.
 - Adding an `&lt;OpenApiReference&gt;` in Visual Studio (Connected Services -&gt; OpenAPI) or using Kiota/Refit generates the models and typed client methods automatically.</p></div><div class="bespoke-marp-note" data-index="20" tabindex="0"><p>=====================================================================</p><p>SLIDE 21: SEQUENTIAL IDENTIFIERS: GUID V7</p><p>=====================================================================</p><p>SPEAKER NOTES:
 - Keep this brief: if you ever generate GUIDs in C# that are stored in an indexed database column, use `Guid.CreateVersion7()` instead of `Guid.NewGuid()` so rows sort in creation order.</p></div><div class="bespoke-marp-note" data-index="21" tabindex="0"><p>=====================================================================</p><p>SLIDE 22: MODULE 4 DIVIDER</p><p>=====================================================================</p><p>SPEAKER NOTES:
-- Module 4 covers ASP.NET Core Minimal APIs.
-- At the end of this module we will run the `MinimalApiDemo` Visual Studio project and execute requests against it using `requests.http`.</p></div><div class="bespoke-marp-note" data-index="22" tabindex="0"><p>=====================================================================</p><p>SLIDE 23: MODEL VALIDATION &amp; IASYNCVALIDATABLEOBJECT</p><p>=====================================================================</p><p>SPEAKER NOTES:
-- Highlight the architectural point first: if you write `if (req.Quantity &lt;= 0)` inside your `MapPost` lambda, someone will inevitably forget to copy that check into `MapPut` or a background job.
+- Module 4 covers ASP.NET Core Minimal APIs, starting with startup configuration validation and progressing into request model validation and OpenAPI generation.
+- At the end of this module we will run the `MinimalApiDemo` Visual Studio project and execute requests against it using `requests.http`.</p></div><div class="bespoke-marp-note" data-index="22" tabindex="0"><p>=====================================================================</p><p>SLIDE 23: OPTIONS PATTERN ENHANCEMENTS</p><p>=====================================================================</p><p>SPEAKER NOTES:
+- Without `ValidateOnStart()`, a missing or invalid setting in `appsettings.json` isn't noticed until a user hits the specific code path that resolves `IOptions&lt;OrderProcessingOptions&gt;`.
+- Adding `[ValidateObjectMembers]` and `[ValidateEnumeratedItems]` ensures validation also traverses nested objects and lists, and source-generated `[OptionsValidator]` makes it reflection-free.</p></div><div class="bespoke-marp-note" data-index="23" tabindex="0"><p>=====================================================================</p><p>SLIDE 24: MODEL VALIDATION &amp; IASYNCVALIDATABLEOBJECT</p><p>=====================================================================</p><p>SPEAKER NOTES:
+- Just as DataAnnotations validate our startup `appsettings.json` options, .NET 10 and 11 bring first-class DataAnnotations validation to Minimal API request models.
+- Highlight the architectural point: if you write `if (req.Quantity &lt;= 0)` inside your `MapPost` lambda, someone will inevitably forget to copy that check into `MapPut` or a background job.
 - Putting data annotations and `IAsyncValidatableObject` on `OrderUpsertModel` keeps the invariant in one place for both inserts and updates.
-- In .NET 10, Minimal APIs gained built-in `AddValidation()` (using a compile-time source generator via `[ValidatableType]`), and .NET 11 adds `IAsyncValidatableObject` so custom validation can `await` database checks cleanly.</p></div><div class="bespoke-marp-note" data-index="23" tabindex="0"><p>=====================================================================</p><p>SLIDE 24: TYPEDRESULTS &amp; BUILT-IN OPENAPI 3.2</p><p>=====================================================================</p><p>SPEAKER NOTES:
+- In .NET 10, Minimal APIs gained built-in `AddValidation()` (using a compile-time source generator via `[ValidatableType]`), and .NET 11 adds `IAsyncValidatableObject` so custom validation can `await` database checks cleanly.</p></div><div class="bespoke-marp-note" data-index="24" tabindex="0"><p>=====================================================================</p><p>SLIDE 25: TYPEDRESULTS &amp; BUILT-IN OPENAPI 3.2</p><p>=====================================================================</p><p>SPEAKER NOTES:
 - Show how `Task&lt;Results&lt;Ok&lt;IEnumerable&lt;OrderDto&gt;&gt;, NotFound&lt;string&gt;&gt;&gt;` does two things at once:
   1. The C# compiler verifies your endpoint only returns those declared status types.
-  2. Built-in OpenAPI reads that return type and populates the `200` and `404` schemas in `/openapi/v1.json` without needing `[ProducesResponseType]` attributes.</p></div><div class="bespoke-marp-note" data-index="24" tabindex="0"><p>=====================================================================</p><p>SLIDE 25: OPTIONS PATTERN ENHANCEMENTS</p><p>=====================================================================</p><p>SPEAKER NOTES:
-- Without `ValidateOnStart()`, a missing or invalid setting in `appsettings.json` isn't noticed until a user hits the specific code path that resolves `IOptions&lt;OrderProcessingOptions&gt;`.
-- Adding `[ValidateObjectMembers]` and `[ValidateEnumeratedItems]` ensures validation also traverses nested objects and lists, and source-generated `[OptionsValidator]` makes it reflection-free.</p></div><div class="bespoke-marp-note" data-index="25" tabindex="0"><p>=====================================================================</p><p>SLIDE 26: PIPELINE FEATURES &amp; MINIMAL API DEMO</p><p>=====================================================================</p><p>SPEAKER NOTES:
+  2. Built-in OpenAPI reads that return type and populates the `200` and `404` schemas in `/openapi/v1.json` without needing `[ProducesResponseType]` attributes.</p></div><div class="bespoke-marp-note" data-index="25" tabindex="0"><p>=====================================================================</p><p>SLIDE 26: PIPELINE FEATURES &amp; MINIMAL API DEMO</p><p>=====================================================================</p><p>SPEAKER NOTES:
 - Point out `.ShortCircuit()` for health checks and static probes so they don't run through auth/logging middleware.
 - [SWITCH TO DEMO]:
   1. Open `demos/MinimalApiDemo/MinimalApiDemo.slnx` (or `Program.cs` and `requests.http`).

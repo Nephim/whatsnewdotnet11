@@ -866,37 +866,35 @@ SPEAKER NOTES:
 <!-- SLIDE 19: BONUS - OPENAPI TO REACT / VITE CODEGEN                     -->
 <!-- ===================================================================== -->
 
-# Bonus: Generating React / Vite Models from OpenAPI
-## Eliminating Hand-Written TypeScript DTOs
+# Bonus: Generating React / Vite Clients from OpenAPI
+## Named Functions & TypeScript Models Directly from `/openapi/v1.json`
 
-Instead of manually maintaining duplicate TypeScript interfaces in our React/Vite repo whenever a C# DTO changes, generate them directly from the Minimal API's OpenAPI spec:
+The OpenAPI spec includes **both** the DTO schemas and the endpoint URL paths + `operationId` (from `.WithName("GetCustomerOrders")` in Minimal APIs). Tools like **Orval** or **Hey API (`@hey-api/openapi-ts`)** generate named functions and React hooks so you never write URL paths by hand:
 
 ```bash
-# 1. Generate TypeScript types from the .NET OpenAPI spec (openapi-typescript):
-npx openapi-typescript http://localhost:5248/openapi/v1.json -o src/api/schema.d.ts
+# Generate typed client functions & DTO models from the .NET OpenAPI spec:
+npx @hey-api/openapi-ts -i http://localhost:5248/openapi/v1.json -o src/api
 ```
 
 ```typescript
-// 2. Use with a lightweight typed wrapper (openapi-fetch) in React / Vite:
-import createClient from "openapi-fetch";
-import type { paths } from "./api/schema";
+// Generated from .WithName("GetCustomerOrders") — URL path and types are baked in:
+import { getCustomerOrders, createOrder, type OrderDto } from "./api";
 
-const api = createClient<paths>({ baseUrl: "http://localhost:5248" });
+// 1. Call the generated function directly (no raw "/api/..." path strings!):
+const { data: orders } = await getCustomerOrders({ path: { customerId: 1 } });
 
-// Path parameters, request body, and return models are 100% inferred from .NET:
-const { data, error } = await api.GET("/api/customers/{customerId}/orders", {
-  params: { path: { customerId: 1 } }
-});
-// 'data' is automatically typed as OrderDto[] | undefined!
+// 2. Or with Orval + React Query, generate ready-to-use hooks:
+const { data: orders, isLoading } = useGetCustomerOrders(customerId);
+// 'orders' is automatically typed as OrderDto[]!
 ```
 
-- **Why This Matters:** If a backend developer renames a property on `OrderDto` in C#, running `npm run build` in Vite immediately flags the exact React component line with a TypeScript compile error.
+- **Why This Matters:** Both URL routes and DTO properties come straight from .NET. If a C# property or endpoint signature changes, `npm run build` in Vite immediately fails with a TypeScript compile error.
 
 <!--
 SPEAKER NOTES:
-- This is a high-leverage workflow improvement for our stack.
-- Because Minimal APIs with `TypedResults` generate an accurate `openapi/v1.json` document automatically, the React/Vite frontend can generate `schema.d.ts` from it (or use `orval` if we want generated TanStack Query hooks).
-- We never have to manually write `interface OrderDto` in TypeScript again, and return types match what the backend actually sends.
+- Why did `openapi-typescript` require passing the URL string? Because `openapi-typescript` only generates a `.d.ts` type dictionary keyed by URL path.
+- If you use a full client generator like `@hey-api/openapi-ts`, `orval`, or `nswag`, it reads the URL path AND the `operationId` (set via `.WithName("GetCustomerOrders")` on the Minimal API endpoint) from `/openapi/v1.json` and generates actual named TypeScript functions (`getCustomerOrders`, `createOrder`) or React Query hooks (`useGetCustomerOrders`).
+- That way, React components never hardcode URL paths or manually define `interface OrderDto`.
 -->
 
 ---
@@ -966,23 +964,64 @@ SPEAKER NOTES:
 <!-- ===================================================================== -->
 
 # Module 4: ASP.NET Core & Minimal APIs (.NET 8 – 11)
-## Model Validation, TypedResults, OpenAPI 3.2 & Startup Options
+## Startup Options, Model Validation, TypedResults & OpenAPI 3.2
 
+- **Options Pattern Startup Validation (`.NET 8–10`):** `ValidateOnStart()` and `[ValidateEnumeratedItems]`
 - **Shared Model Validation (`.NET 10 & 11`):** Why validation belongs on the model + `.NET 11` `IAsyncValidatableObject`
 - **`TypedResults` & Union Endpoints:** Strongly-typed multi-status responses for exact OpenAPI schemas
 - **Built-in OpenAPI 3.1 / 3.2 (`.NET 9–11`):** Dropping Swashbuckle and pairing with Scalar UI
-- **Options Pattern Startup Validation (`.NET 8–10`):** `ValidateOnStart()` and `[ValidateEnumeratedItems]`
 
 <!--
 SPEAKER NOTES:
-- Module 4 covers ASP.NET Core Minimal APIs.
+- Module 4 covers ASP.NET Core Minimal APIs, starting with startup configuration validation and progressing into request model validation and OpenAPI generation.
 - At the end of this module we will run the `MinimalApiDemo` Visual Studio project and execute requests against it using `requests.http`.
 -->
 
 ---
 
 <!-- ===================================================================== -->
-<!-- SLIDE 23: MODEL VALIDATION & IASYNCVALIDATABLEOBJECT                  -->
+<!-- SLIDE 23: OPTIONS PATTERN ENHANCEMENTS                                -->
+<!-- ===================================================================== -->
+
+# Options Pattern: Startup & Deep Validation <span class="badge net8">.NET 8</span> <span class="badge net10">.NET 10</span>
+## Catching Misconfigured `appsettings.json` on Application Startup
+
+```csharp
+// In Program.cs — fails immediately on startup if configuration is invalid:
+builder.Services.AddOptions<OrderProcessingOptions>()
+    .BindConfiguration("OrderProcessing")
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+```
+
+```csharp
+public class OrderProcessingOptions
+{
+    [Range(1, 500)]
+    public int BatchSizeLimit { get; set; } = 100;
+
+    [Required]
+    public string RegionEndpoint { get; set; } = string.Empty;
+
+    // [.NET 8+] Validates nested objects and every item inside a collection:
+    [ValidateObjectMembers]
+    public RetryPolicyOptions RetryPolicy { get; set; } = new();
+
+    [ValidateEnumeratedItems]
+    public List<WebhookChannelOptions> NotificationChannels { get; set; } = [];
+}
+```
+
+<!--
+SPEAKER NOTES:
+- Without `ValidateOnStart()`, a missing or invalid setting in `appsettings.json` isn't noticed until a user hits the specific code path that resolves `IOptions<OrderProcessingOptions>`.
+- Adding `[ValidateObjectMembers]` and `[ValidateEnumeratedItems]` ensures validation also traverses nested objects and lists, and source-generated `[OptionsValidator]` makes it reflection-free.
+-->
+
+---
+
+<!-- ===================================================================== -->
+<!-- SLIDE 24: MODEL VALIDATION & IASYNCVALIDATABLEOBJECT                  -->
 <!-- ===================================================================== -->
 
 # Model-Level Validation & `IAsyncValidatableObject` <span class="badge net10">.NET 10</span> <span class="badge net11">.NET 11</span>
@@ -1019,7 +1058,8 @@ public class OrderUpsertModel : IAsyncValidatableObject
 
 <!--
 SPEAKER NOTES:
-- Highlight the architectural point first: if you write `if (req.Quantity <= 0)` inside your `MapPost` lambda, someone will inevitably forget to copy that check into `MapPut` or a background job.
+- Just as DataAnnotations validate our startup `appsettings.json` options, .NET 10 and 11 bring first-class DataAnnotations validation to Minimal API request models.
+- Highlight the architectural point: if you write `if (req.Quantity <= 0)` inside your `MapPost` lambda, someone will inevitably forget to copy that check into `MapPut` or a background job.
 - Putting data annotations and `IAsyncValidatableObject` on `OrderUpsertModel` keeps the invariant in one place for both inserts and updates.
 - In .NET 10, Minimal APIs gained built-in `AddValidation()` (using a compile-time source generator via `[ValidatableType]`), and .NET 11 adds `IAsyncValidatableObject` so custom validation can `await` database checks cleanly.
 -->
@@ -1027,7 +1067,7 @@ SPEAKER NOTES:
 ---
 
 <!-- ===================================================================== -->
-<!-- SLIDE 24: TYPEDRESULTS & BUILT-IN OPENAPI 3.2                         -->
+<!-- SLIDE 25: TYPEDRESULTS & BUILT-IN OPENAPI 3.2                         -->
 <!-- ===================================================================== -->
 
 # `TypedResults` & Built-in OpenAPI 3.2 <span class="badge net9">.NET 9</span> <span class="badge net11">.NET 11</span>
@@ -1057,47 +1097,6 @@ SPEAKER NOTES:
 - Show how `Task<Results<Ok<IEnumerable<OrderDto>>, NotFound<string>>>` does two things at once:
   1. The C# compiler verifies your endpoint only returns those declared status types.
   2. Built-in OpenAPI reads that return type and populates the `200` and `404` schemas in `/openapi/v1.json` without needing `[ProducesResponseType]` attributes.
--->
-
----
-
-<!-- ===================================================================== -->
-<!-- SLIDE 25: OPTIONS PATTERN ENHANCEMENTS                                -->
-<!-- ===================================================================== -->
-
-# Options Pattern: Startup & Deep Validation <span class="badge net8">.NET 8</span> <span class="badge net10">.NET 10</span>
-## Catching Misconfigured `appsettings.json` on Application Startup
-
-```csharp
-// In Program.cs — fails immediately on startup if configuration is invalid:
-builder.Services.AddOptions<OrderProcessingOptions>()
-    .BindConfiguration("OrderProcessing")
-    .ValidateDataAnnotations()
-    .ValidateOnStart();
-```
-
-```csharp
-public class OrderProcessingOptions
-{
-    [Range(1, 500)]
-    public int BatchSizeLimit { get; set; } = 100;
-
-    [Required]
-    public string RegionEndpoint { get; set; } = string.Empty;
-
-    // [.NET 8+] Validates nested objects and every item inside a collection:
-    [ValidateObjectMembers]
-    public RetryPolicyOptions RetryPolicy { get; set; } = new();
-
-    [ValidateEnumeratedItems]
-    public List<WebhookChannelOptions> NotificationChannels { get; set; } = [];
-}
-```
-
-<!--
-SPEAKER NOTES:
-- Without `ValidateOnStart()`, a missing or invalid setting in `appsettings.json` isn't noticed until a user hits the specific code path that resolves `IOptions<OrderProcessingOptions>`.
-- Adding `[ValidateObjectMembers]` and `[ValidateEnumeratedItems]` ensures validation also traverses nested objects and lists, and source-generated `[OptionsValidator]` makes it reflection-free.
 -->
 
 ---
